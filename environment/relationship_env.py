@@ -258,13 +258,15 @@ class RelationshipEnv(gym.Env):
         )
 
         # Action quality bonus
+        # Fixed: Increased penalty for negative actions to discourage them
         from .actions import POSITIVE_ACTIONS, NEGATIVE_ACTIONS
 
         action_bonus = 0.0
         if action in POSITIVE_ACTIONS:
             action_bonus = self.reward_weights["action_bonus"]
         elif action in NEGATIVE_ACTIONS:
-            action_bonus = -self.reward_weights["action_bonus"]
+            # Increased penalty for negative actions (3x instead of 1x)
+            action_bonus = -self.reward_weights["action_bonus"] * 3.0
 
         return immediate_reward + action_bonus
 
@@ -299,7 +301,8 @@ class RelationshipEnv(gym.Env):
 
         Termination conditions:
         1. SUCCESS: emotion > 0.7 AND trust > 0.75 (relationship repaired)
-        2. FAILURE: emotion < -0.8 OR trust < 0.2 (relationship broken)
+        2. FAILURE: emotion < -0.9 OR trust < 0.1 (relationship broken)
+           Fixed: Relaxed thresholds to prevent immediate termination
         3. NEUTRAL: max steps reached (no clear resolution)
 
         Returns:
@@ -313,7 +316,8 @@ class RelationshipEnv(gym.Env):
             return True, "SUCCESS"
 
         # Negative termination: relationship broken
-        if self.state.emotion_level < -0.8 or self.state.trust_level < 0.2:
+        # Fixed: Relaxed thresholds from -0.8/0.2 to -0.9/0.1 to prevent immediate termination
+        if self.state.emotion_level < -0.9 or self.state.trust_level < 0.1:
             return True, "FAILURE"
 
         return False, None

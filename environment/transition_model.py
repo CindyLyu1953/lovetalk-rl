@@ -81,20 +81,22 @@ class TransitionModel:
                 -0.08,
             ),  # Other party might be unhappy, but not serious; slight emotion and trust decrease
             # Negative actions (Gottman's Four Horsemen)
+            # Fixed: Reduced negative action impacts to prevent immediate termination
+            # Scaled down by ~0.6 to give agents more room to recover
             ActionType.DEFENSIVE: (
-                -0.40,
-                -0.35,
-                -0.25,
+                -0.25,  # Was -0.40, reduced to prevent immediate termination
+                -0.20,  # Was -0.35, reduced
+                -0.15,  # Was -0.25, reduced
             ),  # Defensive behavior → emotion triggered, trust decreases, calmness drops quickly
             ActionType.BLAME: (
-                -0.55,
-                -0.45,
-                -0.35,
+                -0.33,  # Was -0.55, reduced to prevent immediate termination
+                -0.27,  # Was -0.45, reduced
+                -0.21,  # Was -0.35, reduced
             ),  # Explicit accusation → most severe aggressive speech, all three items significantly decrease
             ActionType.WITHDRAW: (
-                -0.45,
-                -0.50,
-                -0.30,
+                -0.27,  # Was -0.45, reduced to prevent immediate termination
+                -0.30,  # Was -0.50, reduced
+                -0.18,  # Was -0.30, reduced
             ),  # Cold war/Silence → strongly reduces trust, also makes atmosphere worse
         }
 

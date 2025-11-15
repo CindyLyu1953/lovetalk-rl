@@ -5,7 +5,7 @@ Implements PPO for the relationship dynamics environment.
 PPO is well-suited for multi-agent scenarios due to its stability.
 """
 
-from typing import Optional
+from typing import Optional, Tuple
 import numpy as np
 import torch
 import torch.nn as nn
@@ -219,14 +219,19 @@ class PPOAgent:
         last_gae = 0
 
         for t in reversed(range(len(rewards))):
-            if dones[t]:
+            if t < len(dones) and dones[t]:
                 next_value = 0
+            elif t < len(values) - 1:
+                next_value = values[t + 1]
+            else:
+                next_value = next_value  # Use provided next_value for terminal state
 
-            delta = rewards[t] + self.discount_factor * next_value - values[t]
-            advantages[t] = last_gae = (
-                delta + self.discount_factor * self.gae_lambda * last_gae
-            )
-            next_value = values[t]
+            if t < len(values):
+                delta = rewards[t] + self.discount_factor * next_value - values[t]
+                advantages[t] = last_gae = (
+                    delta + self.discount_factor * self.gae_lambda * last_gae
+                )
+                next_value = values[t]
 
         returns = advantages + values
         return advantages, returns
@@ -262,6 +267,11 @@ class PPOAgent:
         with torch.no_grad():
             _, values = self.network(states_tensor)
             values = values.squeeze().cpu().numpy()
+            # Ensure values is 1-dimensional
+            if values.ndim == 0:
+                values = np.array([values])
+            elif values.ndim > 1:
+                values = values.flatten()
 
         # Compute GAE
         advantages, returns = self.compute_gae(rewards, values, next_value, dones)
@@ -306,7 +316,14 @@ class PPOAgent:
                 policy_loss = -torch.min(surr1, surr2).mean()
 
                 # Value loss
-                value_loss = nn.MSELoss()(values.squeeze(), batch_returns)
+                batch_values = values.squeeze()
+                batch_returns_tensor = batch_returns
+                # Ensure same shape
+                if batch_values.dim() == 0:
+                    batch_values = batch_values.unsqueeze(0)
+                if batch_returns_tensor.dim() == 0:
+                    batch_returns_tensor = batch_returns_tensor.unsqueeze(0)
+                value_loss = nn.MSELoss()(batch_values, batch_returns_tensor)
 
                 # Total loss
                 loss = (
@@ -340,7 +357,9 @@ class PPOAgent:
 
     def load(self, filepath: str):
         """Load agent model and parameters."""
-        checkpoint = torch.load(filepath, map_location=self.device)
+        # Fixed: Set weights_only=False for PyTorch 2.6+ compatibility
+        # Checkpoints contain numpy arrays in training_stats, so we need to allow unpickling
+        checkpoint = torch.load(filepath, map_location=self.device, weights_only=False)
         self.network.load_state_dict(checkpoint["network"])
         self.optimizer.load_state_dict(checkpoint["optimizer"])
         self.training_stats = checkpoint["training_stats"]

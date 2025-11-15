@@ -266,7 +266,9 @@ class DQNAgent:
 
     def load(self, filepath: str):
         """Load agent model and parameters."""
-        checkpoint = torch.load(filepath, map_location=self.device)
+        # Fixed: Set weights_only=False for PyTorch 2.6+ compatibility
+        # Checkpoints contain numpy arrays in training_stats, so we need to allow unpickling
+        checkpoint = torch.load(filepath, map_location=self.device, weights_only=False)
         self.q_network.load_state_dict(checkpoint["q_network"])
         self.target_network.load_state_dict(checkpoint["target_network"])
         self.optimizer.load_state_dict(checkpoint["optimizer"])

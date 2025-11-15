@@ -99,20 +99,36 @@ class MultiAgentTrainer:
 
             while not (done or truncated):
                 # Select agent
-                agent = self.agent_a if current_agent == 0 else self.agent_b
-                agent_id = 0 if current_agent == 0 else 1
+                if current_agent == 0:
+                    agent = self.agent_a
+                    agent_id = 0
+                else:
+                    # Agent B's turn
+                    if self.train_mode == "fixed_opponent" and self.agent_b is None:
+                        # In fixed_opponent mode, use random actions for agent B
+                        action = self.env.action_space.sample()
+                        log_prob = None
+                        # Take step with random action
+                        next_obs, reward, done, truncated, info = self.env.step(action)
+                        # Store reward for agent B (we track it but don't train)
+                        episode_reward_b += reward
+                        obs = next_obs
+                        current_agent = 1 - current_agent  # Alternate
+                        episode_length += 1
+                        continue
+                    else:
+                        agent = self.agent_b
+                        agent_id = 1
 
                 # Select action
                 if hasattr(agent, "select_action"):
                     # For Q-learning, DQN
-                    action = agent.select_action(obs, training=True)
-                    log_prob = None
-                elif (
-                    hasattr(agent, "select_action")
-                    and "ppo" in agent.__class__.__name__.lower()
-                ):
-                    # For PPO
-                    action, log_prob = agent.select_action(obs, training=True)
+                    if "ppo" in agent.__class__.__name__.lower():
+                        # For PPO
+                        action, log_prob = agent.select_action(obs, training=True)
+                    else:
+                        action = agent.select_action(obs, training=True)
+                        log_prob = None
                 else:
                     raise ValueError(f"Unknown agent type: {type(agent)}")
 
@@ -139,8 +155,13 @@ class MultiAgentTrainer:
                     episode_reward_b += reward
                     episode_data_b["rewards"].append(reward)
 
-                # Update agent (off-policy methods: Q-learning, DQN)
-                if hasattr(agent, "update") and not hasattr(agent, "store_transition"):
+                # Update agent (off-policy methods: Q-learning, SARSA)
+                # Skip incremental updates for PPO (handled at episode end)
+                if (
+                    hasattr(agent, "update")
+                    and not hasattr(agent, "store_transition")
+                    and "ppo" not in agent.__class__.__name__.lower()
+                ):
                     # Q-learning, SARSA (single-step update)
                     if agent_id == 0:
                         if current_agent == 0:  # A just acted, B hasn't
@@ -181,7 +202,11 @@ class MultiAgentTrainer:
                             agent.update(prev_obs, prev_action, prev_reward, obs, done)
 
                 # Store transition for experience replay (DQN)
-                if hasattr(agent, "store_transition"):
+                # Skip for PPO (handled at episode end)
+                if (
+                    hasattr(agent, "store_transition")
+                    and "ppo" not in agent.__class__.__name__.lower()
+                ):
                     agent.store_transition(obs, action, reward, next_obs, done)
                     # Update DQN periodically
                     if len(agent.memory) >= agent.batch_size:

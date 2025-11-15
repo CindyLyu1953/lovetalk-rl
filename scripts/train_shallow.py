@@ -66,17 +66,31 @@ def main():
     args = parser.parse_args()
 
     # Create environment with new parameters
+    # Fixed: Use moderate initial state to prevent immediate termination
+    # Note: emotion is negative to reflect conflict scenario, but not too negative
     env = RelationshipEnv(
         max_episode_steps=20,
         use_history=False,  # Shallow RL doesn't use history
-        initial_emotion=-0.3,
-        initial_trust=0.5,
-        initial_calmness_a=0.4,
-        initial_calmness_b=0.4,
+        initial_emotion=-0.2,  # Slightly negative (conflict scenario, but not too severe)
+        initial_trust=0.6,  # Moderate trust (was 0.5, too low)
+        initial_calmness_a=0.6,  # More calm (was 0.4, too low)
+        initial_calmness_b=0.6,  # More calm (was 0.4, too low)
         irritability_a=0.7 if args.personality_a == "impulsive" else 0.4,
         irritability_b=0.7 if args.personality_b == "impulsive" else 0.4,
         recovery_rate=0.02,
     )
+
+    # Debug: Print initial state
+    test_obs, test_info = env.reset()
+    print(f"\nInitial Environment State:")
+    print(f"  Emotion: {test_info['emotion']:.3f}")
+    print(f"  Trust: {test_info['trust']:.3f}")
+    print(f"  Conflict: {test_info['conflict']:.3f}")
+    print(f"  Calmness A: {test_info['calmness_a']:.3f}")
+    print(f"  Calmness B: {test_info['calmness_b']:.3f}")
+    terminated, reason = env._check_termination()
+    print(f"  Initial Termination Check: {terminated}, Reason: {reason}")
+    print()
 
     # Create agents
     personality_a = PersonalityType[args.personality_a.upper()]

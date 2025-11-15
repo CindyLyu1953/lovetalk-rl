@@ -100,14 +100,15 @@ def main():
     use_history = args.agent_type in ["dqn", "ppo"]
 
     # Create environment with new parameters
+    # Fixed: Use same moderate initial state as training to ensure consistency
     env = RelationshipEnv(
         max_episode_steps=20,
         use_history=use_history,
         history_length=args.history_length,
-        initial_emotion=-0.3,
-        initial_trust=0.5,
-        initial_calmness_a=0.4,
-        initial_calmness_b=0.4,
+        initial_emotion=-0.2,  # Slightly negative (matching training - conflict scenario)
+        initial_trust=0.6,  # Moderate trust (matching training)
+        initial_calmness_a=0.6,  # More calm (matching training)
+        initial_calmness_b=0.6,  # More calm (matching training)
         irritability_a=0.7 if args.personality_a == "impulsive" else 0.4,
         irritability_b=0.7 if args.personality_b == "impulsive" else 0.4,
         recovery_rate=0.02,
