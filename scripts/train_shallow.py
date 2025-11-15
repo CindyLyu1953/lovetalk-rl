@@ -65,12 +65,17 @@ def main():
 
     args = parser.parse_args()
 
-    # Create environment
+    # Create environment with new parameters
     env = RelationshipEnv(
         max_episode_steps=20,
         use_history=False,  # Shallow RL doesn't use history
-        personality_a=args.personality_a,
-        personality_b=args.personality_b,
+        initial_emotion=-0.3,
+        initial_trust=0.5,
+        initial_calmness_a=0.4,
+        initial_calmness_b=0.4,
+        irritability_a=0.7 if args.personality_a == "impulsive" else 0.4,
+        irritability_b=0.7 if args.personality_b == "impulsive" else 0.4,
+        recovery_rate=0.02,
     )
 
     # Create agents

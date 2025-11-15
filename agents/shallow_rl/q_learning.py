@@ -10,6 +10,7 @@ import numpy as np
 from collections import defaultdict
 
 from personality.personality_policy import PersonalityPolicy, PersonalityType
+from environment.action_feasibility import ActionFeasibility
 
 
 class QLearningAgent:
@@ -53,12 +54,16 @@ class QLearningAgent:
         self.epsilon_min = epsilon_min
 
         # Initialize Q-table: state -> action -> Q-value
-        self.q_table: Dict[Tuple[int, int, int], np.ndarray] = defaultdict(
+        # State is now (emotion_bin, trust_bin, conflict_bin, calmness_bin)
+        self.q_table: Dict[Tuple[int, int, int, int], np.ndarray] = defaultdict(
             lambda: np.zeros(num_actions)
         )
 
         # Personality policy
         self.personality = PersonalityPolicy(personality)
+
+        # Action feasibility (for calmness-based action selection)
+        self.action_feasibility = ActionFeasibility()
 
         # Training statistics
         self.training_stats = {
@@ -67,21 +72,23 @@ class QLearningAgent:
             "action_counts": np.zeros(num_actions),
         }
 
-    def discretize_state(self, state: np.ndarray) -> Tuple[int, int, int]:
+    def discretize_state(self, state: np.ndarray) -> Tuple[int, int, int, int]:
         """
         Discretize continuous state into discrete bins.
+        State now includes calmness: [emotion, trust, conflict, calmness]
 
         Args:
-            state: Continuous state vector [emotion, trust, conflict]
+            state: Continuous state vector [emotion, trust, conflict, calmness]
 
         Returns:
-            Discretized state tuple (emotion_bin, trust_bin, conflict_bin)
+            Discretized state tuple (emotion_bin, trust_bin, conflict_bin, calmness_bin)
         """
-        # Apply personality-based state perception
-        perceived_state = self.personality.modify_state_perception(state)
+        # Apply personality-based state perception (only to first 3 dimensions)
+        perceived_state = self.personality.modify_state_perception(state[:3])
 
         # Discretize each dimension
         emotion, trust, conflict = perceived_state[:3]
+        calmness = state[3] if len(state) > 3 else 0.5
 
         emotion_bin = np.digitize(emotion, np.linspace(-1, 1, self.state_bins)) - 1
         emotion_bin = np.clip(emotion_bin, 0, self.state_bins - 1)
@@ -92,14 +99,17 @@ class QLearningAgent:
         conflict_bin = np.digitize(conflict, np.linspace(0, 1, self.state_bins)) - 1
         conflict_bin = np.clip(conflict_bin, 0, self.state_bins - 1)
 
-        return (emotion_bin, trust_bin, conflict_bin)
+        calmness_bin = np.digitize(calmness, np.linspace(0, 1, self.state_bins)) - 1
+        calmness_bin = np.clip(calmness_bin, 0, self.state_bins - 1)
+
+        return (emotion_bin, trust_bin, conflict_bin, calmness_bin)
 
     def select_action(self, state: np.ndarray, training: bool = True) -> int:
         """
-        Select action using epsilon-greedy policy with personality bias.
+        Select action using epsilon-greedy policy with personality bias and calmness feasibility.
 
         Args:
-            state: Current state vector
+            state: Current state vector [emotion, trust, conflict, calmness]
             training: Whether in training mode (affects exploration)
 
         Returns:
@@ -111,6 +121,12 @@ class QLearningAgent:
         # Apply personality-based action bias
         for action_idx in range(self.num_actions):
             q_values[action_idx] += self.personality.get_action_bias(action_idx)
+
+        # Get calmness from state
+        calmness = state[3] if len(state) > 3 else 0.5
+
+        # Apply action feasibility based on calmness
+        q_values = self.action_feasibility.modify_q_values(q_values, calmness)
 
         # Epsilon-greedy exploration
         if training and np.random.random() < self.epsilon:
@@ -172,7 +188,7 @@ class QLearningAgent:
         """Decay exploration rate after episode."""
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
-    def get_policy(self) -> Dict[Tuple[int, int, int], int]:
+    def get_policy(self) -> Dict[Tuple[int, int, int, int], int]:
         """
         Get deterministic policy from Q-table.
 
@@ -185,6 +201,12 @@ class QLearningAgent:
             biased_q = q_values.copy()
             for action_idx in range(self.num_actions):
                 biased_q[action_idx] += self.personality.get_action_bias(action_idx)
+
+            # Apply feasibility (approximate calmness from state bin)
+            # calmness_bin is the 4th element of state tuple
+            calmness = (state[3] + 0.5) / self.state_bins  # Approximate calmness value
+            biased_q = self.action_feasibility.modify_q_values(biased_q, calmness)
+
             policy[state] = np.argmax(biased_q)
         return policy
 

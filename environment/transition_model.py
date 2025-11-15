@@ -1,9 +1,9 @@
 """
 Transition Model
 
-Defines how actions affect relationship state changes (emotion, trust, conflict).
-Values are calibrated based on psychological models (Gottman, NVC) and can be
-calibrated using real dialogue data (DailyDialog, EmpatheticDialogues).
+Defines how actions affect relationship state changes (emotion, trust, calmness).
+Values are calibrated based on psychological models (Gottman, NVC) and real data.
+Updated to include calmness effects based on the revised transition table.
 """
 
 from typing import Dict, Tuple
@@ -18,90 +18,129 @@ class TransitionModel:
     Each action type has associated effects on:
     - emotion_level: Change in emotional valence
     - trust_level: Change in trust
-    - conflict_intensity: Change in conflict intensity
+    - calmness: Change in calmness (per-agent internal state)
 
     Values are calibrated based on:
-    1. Gottman's Four Horsemen model (negative actions)
-    2. Nonviolent Communication (NVC) model (positive actions)
-    3. Emotion Regulation & Repair Research
-    4. Real dialogue data calibration (optional)
+    1. Updated transition table with calmness effects
+    2. Gottman's Four Horsemen model (negative actions)
+    3. Nonviolent Communication (NVC) model (positive actions)
+    4. Emotion Regulation & Repair Research
+
+    Key insights from updated table:
+    - EMPATHIZE: Most effective for emotion repair, but doesn't directly increase trust
+    - EXPLAIN/SUGGEST_SOLUTION: Strong trust builders, moderate emotion effects
+    - APOLOGIZE/ASK_FOR_NEEDS: Balanced effects, not extreme
+    - BLAME: Most damaging to emotion
+    - WITHDRAW: Most damaging to trust
     """
 
     def __init__(self):
         """
-        Initialize transition model with default action effects.
-        These values can be calibrated using real dialogue data.
+        Initialize transition model with updated action effects including calmness.
+        Values based on the revised transition table.
         """
-        # Action effects: (delta_emotion, delta_trust, delta_conflict)
-        # Positive actions typically increase emotion/trust and decrease conflict
-        # Negative actions typically decrease emotion/trust and increase conflict
+        # Action effects: (delta_emotion, delta_trust, delta_calmness)
+        # Updated according to the new transition table
 
         self.action_effects: Dict[ActionType, Tuple[float, float, float]] = {
             # Positive actions (NVC-based)
             ActionType.APOLOGIZE: (
+                0.25,
+                0.35,
+                0.18,
+            ),  # Taking responsibility → trust rises significantly; moderate emotion boost
+            ActionType.EMPATHIZE: (
+                0.45,
+                0.12,
+                0.30,
+            ),  # Most effective emotional repair, but doesn't necessarily increase trust
+            ActionType.EXPLAIN: (
+                0.12,
+                0.45,
+                0.08,
+            ),  # Clarifying facts → strongly increases trust, but helps little with emotion
+            ActionType.REASSURE: (
+                0.40,
                 0.15,
+                0.25,
+            ),  # Reassuring speech → emotional stability + slight trust increase
+            ActionType.SUGGEST_SOLUTION: (
+                0.15,
+                0.40,
+                0.12,
+            ),  # Problem-solving oriented → trust significantly increases, emotion slightly improves
+            ActionType.ASK_FOR_NEEDS: (
+                0.28,
+                0.28,
                 0.20,
-                -0.15,
-            ),  # Strong trust boost, conflict reduction
-            ActionType.EMPATHIZE: (0.12, 0.15, -0.12),  # Emotion and trust improvement
-            ActionType.EXPLAIN: (0.05, 0.08, -0.08),  # Moderate positive effect
-            ActionType.REASSURE: (0.10, 0.12, -0.10),  # Emotion improvement
-            ActionType.SUGGEST_SOLUTION: (0.08, 0.10, -0.15),  # Conflict reduction
-            ActionType.ASK_FOR_NEEDS: (0.06, 0.10, -0.08),  # Trust building
+            ),  # Dual improvement, moderately balanced action, not extreme
             # Neutral actions
             ActionType.CHANGE_TOPIC: (
-                0.0,
-                -0.02,
-                0.05,
-            ),  # Slight conflict increase, trust decrease
+                -0.10,
+                -0.15,
+                -0.08,
+            ),  # Other party might be unhappy, but not serious; slight emotion and trust decrease
             # Negative actions (Gottman's Four Horsemen)
-            ActionType.DEFENSIVE: (-0.10, -0.08, 0.12),  # Increases conflict
-            ActionType.BLAME: (-0.15, -0.15, 0.18),  # Strong negative effect
-            ActionType.WITHDRAW: (-0.12, -0.12, 0.10),  # Emotion and trust decrease
+            ActionType.DEFENSIVE: (
+                -0.40,
+                -0.35,
+                -0.25,
+            ),  # Defensive behavior → emotion triggered, trust decreases, calmness drops quickly
+            ActionType.BLAME: (
+                -0.55,
+                -0.45,
+                -0.35,
+            ),  # Explicit accusation → most severe aggressive speech, all three items significantly decrease
+            ActionType.WITHDRAW: (
+                -0.45,
+                -0.50,
+                -0.30,
+            ),  # Cold war/Silence → strongly reduces trust, also makes atmosphere worse
         }
 
-        # Personality modifiers (can be adjusted per agent)
-        self.default_personality_modifier = {
-            "impulsive": 1.3,  # Amplifies all effects
-            "sensitive": 1.2,  # Amplifies negative effects more
-            "avoidant": 0.8,  # Reduces all effects
-            "neutral": 1.0,
-        }
+        # Calmness effects on action feasibility are handled in ActionFeasibility module
 
     def compute_transition(
-        self, action: ActionType, personality_type: str = "neutral"
+        self, action: ActionType, irritability: float = 0.4
     ) -> Tuple[float, float, float]:
         """
-        Compute state transition given an action and personality type.
+        Compute state transition given an action and agent's irritability trait.
 
         Args:
             action: The action taken
-            personality_type: Personality type affecting action impact
+            irritability: Agent's irritability trait [0, 1]
+                         Affects how calmness changes from actions
 
         Returns:
-            Tuple of (delta_emotion, delta_trust, delta_conflict)
+            Tuple of (delta_emotion, delta_trust, delta_calmness)
         """
         base_effect = self.action_effects[action]
-        modifier = self.default_personality_modifier.get(personality_type, 1.0)
+        delta_emotion, delta_trust, delta_calmness = base_effect
 
-        # Apply personality modifier
-        delta_emotion, delta_trust, delta_conflict = [
-            effect * modifier for effect in base_effect
-        ]
+        # Irritability affects calmness changes:
+        # - Negative actions → calmness drops more for high irritability
+        # - Positive actions → calmness rises less for high irritability
+        if delta_calmness < 0:
+            # Negative action: apply irritability multiplier (more drop)
+            delta_calmness *= 1 + irritability
+        else:
+            # Positive action: apply irritability multiplier (less rise)
+            delta_calmness *= 1 - irritability
 
         # Add small random noise to model uncertainty (optional)
         noise_scale = 0.02
         delta_emotion += np.random.normal(0, noise_scale)
         delta_trust += np.random.normal(0, noise_scale)
-        delta_conflict += np.random.normal(0, noise_scale)
+        delta_calmness += np.random.normal(0, noise_scale * 0.5)
 
-        return delta_emotion, delta_trust, delta_conflict
+        return delta_emotion, delta_trust, delta_calmness
 
     def update_state(
         self,
         current_state: "RelationshipState",
         action: ActionType,
-        personality_type: str = "neutral",
+        agent_id: int,
+        recovery_rate: float = 0.02,
     ) -> "RelationshipState":
         """
         Update relationship state based on action.
@@ -109,24 +148,39 @@ class TransitionModel:
         Args:
             current_state: Current relationship state
             action: Action taken
-            personality_type: Personality type affecting transition
+            agent_id: Agent ID (0 for A, 1 for B)
+            recovery_rate: Automatic calmness recovery rate per step
 
         Returns:
             New relationship state after transition
         """
-        delta_emotion, delta_trust, delta_conflict = self.compute_transition(
-            action, personality_type
+        # Get agent's irritability trait
+        irritability = current_state.get_irritability(agent_id)
+
+        # Compute transitions
+        delta_emotion, delta_trust, delta_calmness = self.compute_transition(
+            action, irritability
         )
 
         # Create new state with updated values
         new_state = current_state.copy()
+
+        # Update relationship metrics
         new_state.emotion_level = np.clip(
             new_state.emotion_level + delta_emotion, -1.0, 1.0
         )
         new_state.trust_level = np.clip(new_state.trust_level + delta_trust, 0.0, 1.0)
+
+        # Update conflict intensity (derived from emotion and trust)
+        # Conflict increases when emotion is negative and trust is low
+        conflict_from_emotion = max(0, -new_state.emotion_level) * 0.5
+        conflict_from_trust = (1.0 - new_state.trust_level) * 0.5
         new_state.conflict_intensity = np.clip(
-            new_state.conflict_intensity + delta_conflict, 0.0, 1.0
+            conflict_from_emotion + conflict_from_trust, 0.0, 1.0
         )
+
+        # Update calmness for the agent who took the action
+        new_state.update_calmness(agent_id, delta_calmness, recovery_rate)
 
         # Add action to history
         new_state.add_action(action.value)
@@ -142,7 +196,7 @@ class TransitionModel:
 
         Args:
             calibration_data: Dictionary containing calibrated action effects
-                Format: {ActionType: (delta_emotion, delta_trust, delta_conflict), ...}
+                Format: {ActionType: (delta_emotion, delta_trust, delta_calmness), ...}
         """
         for action_type, effects in calibration_data.items():
             if action_type in self.action_effects:

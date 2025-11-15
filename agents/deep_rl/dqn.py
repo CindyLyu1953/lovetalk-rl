@@ -14,6 +14,7 @@ from collections import deque
 import random
 
 from personality.personality_policy import PersonalityPolicy, PersonalityType
+from environment.action_feasibility import ActionFeasibility
 
 
 class QNetwork(nn.Module):
@@ -133,6 +134,9 @@ class DQNAgent:
         # Personality policy
         self.personality = PersonalityPolicy(personality)
 
+        # Action feasibility (for calmness-based action selection)
+        self.action_feasibility = ActionFeasibility()
+
         # Training statistics
         self.update_counter = 0
         self.training_stats = {
@@ -144,10 +148,10 @@ class DQNAgent:
 
     def select_action(self, state: np.ndarray, training: bool = True) -> int:
         """
-        Select action using epsilon-greedy policy.
+        Select action using epsilon-greedy policy with calmness feasibility.
 
         Args:
-            state: Current state vector
+            state: Current state vector [emotion, trust, conflict, calmness, ...]
             training: Whether in training mode (affects exploration)
 
         Returns:
@@ -164,6 +168,12 @@ class DQNAgent:
         # Apply personality bias
         for action_idx in range(self.action_dim):
             q_values[action_idx] += self.personality.get_action_bias(action_idx)
+
+        # Get calmness from state (4th element if state includes it)
+        calmness = state[3] if len(state) > 3 else 0.5
+
+        # Apply action feasibility based on calmness
+        q_values = self.action_feasibility.modify_q_values(q_values, calmness)
 
         return np.argmax(q_values)
 

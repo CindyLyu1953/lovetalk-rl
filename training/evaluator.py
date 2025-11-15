@@ -110,6 +110,8 @@ class Evaluator:
 
         # Compute evaluation metrics
         final_state = info
+        termination_reason = final_state.get("termination_reason", "NEUTRAL")
+
         metrics = {
             "total_reward_a": sum(episode_data["rewards_a"]),
             "total_reward_b": sum(episode_data["rewards_b"]),
@@ -117,10 +119,12 @@ class Evaluator:
             "final_emotion": final_state["emotion"],
             "final_trust": final_state["trust"],
             "final_conflict": final_state["conflict"],
-            "conflict_resolved": final_state["conflict"] < 0.2
-            and final_state["emotion"] > 0.5,
-            "relationship_broken": final_state["trust"] < 0.2
-            and final_state["emotion"] < -0.8,
+            "final_calmness_a": final_state.get("calmness_a", 0.5),
+            "final_calmness_b": final_state.get("calmness_b", 0.5),
+            "termination_reason": termination_reason,
+            "success": termination_reason == "SUCCESS",
+            "failure": termination_reason == "FAILURE",
+            "neutral": termination_reason == "NEUTRAL",
             "action_distribution_a": Counter(episode_data["actions_a"]),
             "action_distribution_b": Counter(episode_data["actions_b"]),
         }
@@ -163,12 +167,15 @@ class Evaluator:
             "avg_final_emotion": np.mean([m["final_emotion"] for m in all_metrics]),
             "avg_final_trust": np.mean([m["final_trust"] for m in all_metrics]),
             "avg_final_conflict": np.mean([m["final_conflict"] for m in all_metrics]),
-            "conflict_resolution_rate": np.mean(
-                [m["conflict_resolved"] for m in all_metrics]
+            "avg_final_calmness_a": np.mean(
+                [m["final_calmness_a"] for m in all_metrics]
             ),
-            "relationship_break_rate": np.mean(
-                [m["relationship_broken"] for m in all_metrics]
+            "avg_final_calmness_b": np.mean(
+                [m["final_calmness_b"] for m in all_metrics]
             ),
+            "success_rate": np.mean([m["success"] for m in all_metrics]),
+            "failure_rate": np.mean([m["failure"] for m in all_metrics]),
+            "neutral_rate": np.mean([m["neutral"] for m in all_metrics]),
         }
 
         # Aggregate action distributions
@@ -203,9 +210,13 @@ class Evaluator:
         print(f"  Emotion: {results['avg_final_emotion']:.3f}")
         print(f"  Trust: {results['avg_final_trust']:.3f}")
         print(f"  Conflict: {results['avg_final_conflict']:.3f}")
-        print(f"\nSuccess Rates:")
-        print(f"  Conflict Resolution: {results['conflict_resolution_rate']*100:.1f}%")
-        print(f"  Relationship Break: {results['relationship_break_rate']*100:.1f}%")
+        print(f"\nTermination Rates:")
+        print(f"  Success (Repaired): {results['success_rate']*100:.1f}%")
+        print(f"  Failure (Broken): {results['failure_rate']*100:.1f}%")
+        print(f"  Neutral (Stalemate): {results['neutral_rate']*100:.1f}%")
+        print(f"\nFinal Calmness:")
+        print(f"  Agent A: {results['avg_final_calmness_a']:.3f}")
+        print(f"  Agent B: {results['avg_final_calmness_b']:.3f}")
 
         if "action_distribution_a" in results:
             print("\nAction Distribution (Agent A):")

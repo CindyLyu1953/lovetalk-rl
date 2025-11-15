@@ -13,6 +13,7 @@ import torch.optim as optim
 from torch.distributions import Categorical
 
 from personality.personality_policy import PersonalityPolicy, PersonalityType
+from environment.action_feasibility import ActionFeasibility
 
 
 class ActorCritic(nn.Module):
@@ -148,6 +149,9 @@ class PPOAgent:
         # Personality policy
         self.personality = PersonalityPolicy(personality)
 
+        # Action feasibility (for calmness-based action selection)
+        self.action_feasibility = ActionFeasibility()
+
         # Training statistics
         self.training_stats = {
             "episodes": 0,
@@ -159,10 +163,10 @@ class PPOAgent:
 
     def select_action(self, state: np.ndarray, training: bool = True):
         """
-        Select action from policy distribution.
+        Select action from policy distribution with calmness feasibility.
 
         Args:
-            state: Current state vector
+            state: Current state vector [emotion, trust, conflict, calmness, ...]
             training: Whether in training mode
 
         Returns:
@@ -179,9 +183,11 @@ class PPOAgent:
             bias = self.personality.get_action_bias(action_idx)
             action_probs[action_idx] += bias
 
-        # Normalize probabilities
-        action_probs = np.clip(action_probs, 0, None)
-        action_probs = action_probs / (action_probs.sum() + 1e-8)
+        # Get calmness from state (4th element if state includes it)
+        calmness = state[3] if len(state) > 3 else 0.5
+
+        # Apply action feasibility based on calmness
+        action_probs = self.action_feasibility.modify_policy(action_probs, calmness)
 
         # Sample action
         dist = Categorical(torch.FloatTensor(action_probs))
