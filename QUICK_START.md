@@ -6,40 +6,39 @@ A concise guide for running experiments and understanding the codebase.
 
 ### Run All Experiments (Recommended)
 ```bash
-# Clear old results and run all 13 experiments
+# Clear old results and run all 12 experiments
 bash RUN_EXPERIMENTS.sh 5000 --clear-force
 ```
 
 This will:
-1. Train all 13 experiments (5000 episodes each)
+1. Train all 12 experiments (Shallow RL: 5000 episodes, Deep RL: 8000 episodes each)
 2. Evaluate all trained models (100 episodes each)
 3. Collect results into comparison tables
 4. Generate visualization figures
 
-**Time**: ~6-12 hours (CPU) or ~2-4 hours (GPU)
+**Time**: ~8-16 hours (CPU) or ~3-6 hours (GPU)
 
 ---
 
 ## Experiment Overview
 
-### 13 Core Experiments
+### 12 Core Experiments
 
-**Table A: Shallow RL (6 experiments)**
+**Table A: Shallow RL (7 experiments)**
 - **S1**: Q-learning, neutral vs neutral (Baseline)
 - **S2**: Q-learning, impulsive vs sensitive (Most intense conflict)
 - **S3**: Q-learning, impulsive vs impulsive (Extreme conflict)
 - **S4**: Q-learning, neutral vs avoidant (Cold war mode)
 - **S5**: Q-learning, sensitive vs sensitive (Both sensitive)
 - **S6**: Q-learning, fixed_opponent, impulsive vs sensitive
-
-**Table B: Deep RL (4 experiments)**
-- **D1**: DQN, neutral vs neutral (Deep baseline)
-- **D2**: DQN, impulsive vs sensitive (Shallow vs Deep comparison)
-- **D3**: PPO, impulsive vs sensitive (PPO stable strategy)
-- **D4**: PPO, sensitive vs sensitive (Emotionally delicate interaction)
-
-**Table C: Algorithm Comparison (1 additional)**
 - **S2_SARSA**: SARSA, impulsive vs sensitive (Q-learning vs SARSA)
+
+**Table B: Deep RL (5 experiments)**
+- **D1**: DQN, neutral vs neutral (Baseline)
+- **D2**: DQN, impulsive vs sensitive (Intense conflict)
+- **D3**: DQN, impulsive vs impulsive (Extreme conflict)
+- **D4**: DQN, neutral vs avoidant (Cold war)
+- **D5**: DQN, sensitive vs sensitive (Mutual misunderstanding)
 
 ---
 
@@ -59,15 +58,15 @@ python scripts/train_shallow.py \
 
 # Train single experiment (Deep RL)
 python scripts/train_deep.py \
-    --algorithm dqn \
-    --episodes 5000 \
-    --personality_a neutral \
-    --personality_b neutral \
-    --train_mode self_play \
-    --save_dir ./experiments/D1/checkpoints \
-    --history_length 10
+    --experiment D1 \
+    --save_dir ./experiments
 
-# Train all experiments (batch)
+# Train all Deep RL experiments (D1-D5)
+python scripts/train_deep.py \
+    --all \
+    --save_dir ./experiments
+
+# Train all experiments (batch - Shallow + Deep)
 python scripts/run_all_experiments.py \
     --episodes 5000 \
     --clear_first --clear_force
@@ -76,8 +75,8 @@ python scripts/run_all_experiments.py \
 ### Evaluation
 
 ```bash
-# Evaluate single experiment
-python scripts/evaluate.py \
+# Evaluate single experiment (Shallow RL)
+python scripts/evaluate_shallow.py \
     --agent_type q_learning \
     --checkpoint_a ./experiments/S1/checkpoints/agent_a_ep5000.pth \
     --checkpoint_b ./experiments/S1/checkpoints/agent_b_ep5000.pth \
@@ -85,7 +84,18 @@ python scripts/evaluate.py \
     --personality_b neutral \
     --num_episodes 100
 
-# Evaluate all experiments
+# Evaluate single experiment (Deep RL)
+python scripts/evaluate_deep.py \
+    --experiment D1 \
+    --checkpoint_dir ./experiments \
+    --num_episodes 100
+
+# Evaluate all Deep RL experiments (D1-D5)
+python scripts/evaluate_deep.py \
+    --checkpoint_dir ./experiments \
+    --num_episodes 100
+
+# Evaluate all experiments (Shallow + Deep)
 python scripts/evaluate_all.py --num_episodes 100
 ```
 
@@ -149,13 +159,20 @@ experiments/
 - **Calmness**: `0.6` (more calm, prevents immediate termination)
 
 ### Termination Conditions
+
+**Shallow RL:**
 - **SUCCESS**: `emotion > 0.7 AND trust > 0.75`
 - **FAILURE**: `emotion < -0.9 OR trust < 0.1`
 - **NEUTRAL**: Max steps (20) reached
 
+**Deep RL (optimized for conflict resolution):**
+- **SUCCESS**: `emotion > 0.2 AND trust > 0.6` (moderate repair)
+- **FAILURE**: `emotion < -0.9 OR trust < 0.1` (extreme conflict)
+- **STALEMATE**: Max steps (20) reached (cold war)
+
 ### Algorithms
 - **Shallow RL**: Q-learning, SARSA (tabular methods)
-- **Deep RL**: DQN, PPO (neural network methods)
+- **Deep RL**: DQN with optimized hyperparameters (neural network method)
 
 ---
 

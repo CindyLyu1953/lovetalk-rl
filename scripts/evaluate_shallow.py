@@ -1,10 +1,7 @@
 """
-Evaluation Script (Legacy - Use evaluate_shallow.py or evaluate_deep.py instead)
+Evaluation Script for Shallow RL Agents
 
-This script is kept for backward compatibility but is deprecated.
-Please use:
-- scripts/evaluate_shallow.py for Shallow RL agents (Q-learning, SARSA)
-- scripts/evaluate_deep.py for Deep RL agents (DQN)
+Evaluate trained Shallow RL agents (Q-learning, SARSA) in the relationship dynamics simulator.
 """
 
 import argparse
@@ -16,7 +13,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from environment import RelationshipEnv
 from agents.shallow_rl import QLearningAgent, SarsaAgent
-from agents.deep_rl import DQNAgent
 from personality import PersonalityType
 from training import Evaluator
 
@@ -24,10 +20,9 @@ from training import Evaluator
 def load_agent(
     agent_type: str,
     checkpoint_path: str,
-    state_dim: int = None,
     personality: PersonalityType = PersonalityType.NEUTRAL,
 ):
-    """Load a trained agent from checkpoint."""
+    """Load a trained Shallow RL agent from checkpoint."""
     if agent_type == "q_learning":
         agent = QLearningAgent(num_actions=10, personality=personality)
         agent.load(checkpoint_path)
@@ -36,26 +31,20 @@ def load_agent(
         agent = SarsaAgent(num_actions=10, personality=personality)
         agent.load(checkpoint_path)
         return agent
-    elif agent_type == "dqn":
-        if state_dim is None:
-            raise ValueError("state_dim required for DQN agent")
-        agent = DQNAgent(state_dim=state_dim, action_dim=10, personality=personality)
-        agent.load(checkpoint_path)
-        return agent
     else:
         raise ValueError(
-            f"Unknown agent type: {agent_type}. Use evaluate_shallow.py or evaluate_deep.py"
+            f"Unknown agent type: {agent_type}. Must be 'q_learning' or 'sarsa'"
         )
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate trained agents")
+    parser = argparse.ArgumentParser(description="Evaluate trained Shallow RL agents")
     parser.add_argument(
         "--agent_type",
         type=str,
         required=True,
-        choices=["q_learning", "sarsa", "dqn"],
-        help="Type of agent to evaluate (use evaluate_shallow.py or evaluate_deep.py instead)",
+        choices=["q_learning", "sarsa"],
+        help="Type of agent to evaluate",
     )
     parser.add_argument(
         "--checkpoint_a", type=str, required=True, help="Checkpoint path for agent A"
@@ -86,27 +75,13 @@ def main():
     parser.add_argument(
         "--render", action="store_true", help="Render episodes during evaluation"
     )
-    parser.add_argument(
-        "--history_length",
-        type=int,
-        default=10,
-        help="Length of action history (for deep RL)",
-    )
 
     args = parser.parse_args()
 
-    # Determine if deep RL (needs history)
-    use_history = args.agent_type == "dqn"
-
-    # Determine if this is Deep RL with optimized settings
-    use_deep_rl_reward = args.agent_type == "dqn"
-
-    # Create environment with new parameters
-    # Fixed: Use same moderate initial state as training to ensure consistency
+    # Create environment (Shallow RL doesn't use history)
     env = RelationshipEnv(
         max_episode_steps=20,
-        use_history=use_history,
-        history_length=args.history_length,
+        use_history=False,  # Shallow RL doesn't use history
         initial_emotion=-0.2,  # Slightly negative (matching training - conflict scenario)
         initial_trust=0.6,  # Moderate trust (matching training)
         initial_calmness_a=0.6,  # More calm (matching training)
@@ -114,33 +89,16 @@ def main():
         irritability_a=0.7 if args.personality_a == "impulsive" else 0.4,
         irritability_b=0.7 if args.personality_b == "impulsive" else 0.4,
         recovery_rate=0.02,
-        use_deep_rl_reward=use_deep_rl_reward,  # Use Deep RL reward for Deep RL agents
-        termination_thresholds=(
-            {
-                "success_emotion": 0.2,
-                "success_trust": 0.6,
-                "failure_emotion": -0.9,
-                "failure_trust": 0.1,
-            }
-            if use_deep_rl_reward
-            else None
-        ),
     )
-
-    # Get state dimension
-    obs, _ = env.reset()
-    state_dim = len(obs) if use_history else None
 
     # Load agents
     personality_a = PersonalityType[args.personality_a.upper()]
     personality_b = PersonalityType[args.personality_b.upper()]
 
-    agent_a = load_agent(args.agent_type, args.checkpoint_a, state_dim, personality_a)
+    agent_a = load_agent(args.agent_type, args.checkpoint_a, personality_a)
 
     if args.checkpoint_b:
-        agent_b = load_agent(
-            args.agent_type, args.checkpoint_b, state_dim, personality_b
-        )
+        agent_b = load_agent(args.agent_type, args.checkpoint_b, personality_b)
     else:
         agent_b = agent_a  # Use same agent for both
 

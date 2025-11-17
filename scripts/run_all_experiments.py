@@ -83,23 +83,31 @@ EXPERIMENTS = {
         "mode": "self_play",
         "personality_a": "impulsive",
         "personality_b": "sensitive",
-        "description": "Comparison: shallow to deep advantage (DQN, impulsive vs sensitive)",
+        "description": "Intense conflict (DQN, impulsive vs sensitive)",
         "category": "deep",
     },
     "D3": {
-        "algorithm": "ppo",
+        "algorithm": "dqn",
         "mode": "self_play",
         "personality_a": "impulsive",
-        "personality_b": "sensitive",
-        "description": "PPO stable strategy (PPO, impulsive vs sensitive)",
+        "personality_b": "impulsive",
+        "description": "Extreme conflict (DQN, impulsive vs impulsive)",
         "category": "deep",
     },
     "D4": {
-        "algorithm": "ppo",
+        "algorithm": "dqn",
+        "mode": "self_play",
+        "personality_a": "neutral",
+        "personality_b": "avoidant",
+        "description": "Cold war (DQN, neutral vs avoidant)",
+        "category": "deep",
+    },
+    "D5": {
+        "algorithm": "dqn",
         "mode": "self_play",
         "personality_a": "sensitive",
         "personality_b": "sensitive",
-        "description": "Testing emotionally delicate interaction (PPO, sensitive vs sensitive)",
+        "description": "Mutual misunderstanding (DQN, sensitive vs sensitive)",
         "category": "deep",
     },
     # Table C: Algorithm Comparison (additional experiments)
@@ -110,14 +118,6 @@ EXPERIMENTS = {
         "personality_b": "sensitive",
         "description": "SARSA for comparison with S2 (Q-learning vs SARSA)",
         "category": "shallow",
-    },
-    "D2_PPO": {
-        "algorithm": "ppo",
-        "mode": "self_play",
-        "personality_a": "impulsive",
-        "personality_b": "sensitive",
-        "description": "PPO for comparison with D2 (DQN vs PPO) - same as D3",
-        "category": "deep",
     },
     # Note: C3 (Shallow vs Deep) can be compared using S2 vs D2
 }
@@ -162,27 +162,14 @@ def run_experiment(
         ]
     else:  # deep
         script = "scripts/train_deep.py"
+        # Deep RL training script uses --experiment parameter
         cmd = [
             "python",
             script,
-            "--algorithm",
-            config["algorithm"],
-            "--episodes",
-            str(num_episodes),
-            "--personality_a",
-            config["personality_a"],
-            "--personality_b",
-            config["personality_b"],
-            "--train_mode",
-            config["mode"],
+            "--experiment",
+            exp_id,
             "--save_dir",
-            str(checkpoint_dir),
-            "--log_interval",
-            str(log_interval),
-            "--save_interval",
-            str(save_interval),
-            "--history_length",
-            "10",
+            str(checkpoint_dir.parent),  # train_deep.py expects base dir
         ]
 
     # Create log file
@@ -237,7 +224,7 @@ def run_experiment(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run all 13 core experiments for Relationship Dynamics Simulator"
+        description="Run all 12 core experiments for Relationship Dynamics Simulator (7 Shallow RL + 5 Deep RL)"
     )
     parser.add_argument(
         "--episodes",
@@ -292,7 +279,7 @@ def main():
     if args.experiments:
         exp_ids = args.experiments
     else:
-        # Run all 13 core experiments (excluding duplicate D2_PPO which is same as D3)
+        # Run all 12 core experiments (Shallow RL: S1-S6 + S2_SARSA, Deep RL: D1-D5)
         exp_ids = [
             "S1",
             "S2",
@@ -300,11 +287,12 @@ def main():
             "S4",
             "S5",
             "S6",
+            "S2_SARSA",
             "D1",
             "D2",
             "D3",
             "D4",
-            "S2_SARSA",
+            "D5",
         ]
 
     # Filter to only include defined experiments

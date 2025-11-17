@@ -37,12 +37,12 @@ environment:
   trust_clip_range: [0, 1]
   calmness_clip_range: [0, 1]
   
-  # Termination conditions
+  # Termination conditions (updated for Deep RL optimization)
   termination:
-    success_emotion_threshold: 0.7
-    success_trust_threshold: 0.75
-    failure_emotion_threshold: -0.8
-    failure_trust_threshold: 0.2
+    success_emotion_threshold: 0.2  # Moderate repair (from negative to slightly positive)
+    success_trust_threshold: 0.6  # Moderate trust recovery
+    failure_emotion_threshold: -0.9  # Extreme conflict
+    failure_trust_threshold: 0.1  # Very low trust
 
 # Personality Configuration (legacy, for reference)
 personalities:
@@ -63,14 +63,14 @@ shallow_rl:
 # Deep RL Configuration
 deep_rl:
   algorithm: dqn  # Options: dqn, ppo
-  learning_rate: 1e-4  # DQN: 1e-4, PPO: 3e-4
-  discount_factor: 0.95
+  learning_rate: 3e-4  # DQN: 3e-4 (optimized for conflict resolution)
+  discount_factor: 0.99  # Increased for long-term relationship repair
   epsilon: 1.0  # DQN only
-  epsilon_decay: 0.995  # DQN only
-  epsilon_min: 0.01  # DQN only
+  epsilon_decay: 0.997  # DQN only - slower decay for more exploration
+  epsilon_min: 0.05  # DQN only - higher min for emotionally unstable behavior
   batch_size: 64
-  memory_size: 10000  # DQN only
-  target_update_freq: 100  # DQN only
+  memory_size: 20000  # DQN only - larger buffer
+  target_update_freq: 200  # DQN only - less frequent updates for stability
   # PPO-specific
   gae_lambda: 0.95
   clip_epsilon: 0.2
@@ -81,10 +81,10 @@ deep_rl:
 
 # Training Configuration
 training:
-  num_episodes: 5000
+  num_episodes: 8000  # Deep RL: 8000 episodes
   train_mode: self_play  # Options: self_play, fixed_opponent
-  log_interval: 100
-  save_interval: 1000
+  log_interval: 200  # Deep RL: log every 200 episodes
+  save_interval: 2000  # Deep RL: save every 2000 episodes
   save_dir: ./checkpoints
 
 # Evaluation Configuration

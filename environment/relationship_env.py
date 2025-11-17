@@ -46,6 +46,8 @@ class RelationshipEnv(gym.Env):
         reward_weights: Dict[str, float] = None,
         feasibility_alpha: float = 1.0,
         feasibility_beta: float = 1.0,
+        use_deep_rl_reward: bool = False,
+        termination_thresholds: Dict[str, float] = None,
     ):
         """
         Initialize relationship communication environment.
@@ -79,11 +81,35 @@ class RelationshipEnv(gym.Env):
         )
 
         # Reward weights (default: balanced)
+        # Note: For Deep RL, use custom reward function in _compute_reward
         self.reward_weights = reward_weights or {
             "emotion": 1.0,
             "trust": 1.0,
             "action_bonus": 0.1,
         }
+
+        # Flag to use Deep RL reward function
+        self.use_deep_rl_reward = use_deep_rl_reward
+
+        # Termination thresholds (can be customized)
+        if termination_thresholds:
+            self.success_emotion_threshold = termination_thresholds.get(
+                "success_emotion", 0.2
+            )
+            self.success_trust_threshold = termination_thresholds.get(
+                "success_trust", 0.6
+            )
+            self.failure_emotion_threshold = termination_thresholds.get(
+                "failure_emotion", -0.9
+            )
+            self.failure_trust_threshold = termination_thresholds.get(
+                "failure_trust", 0.1
+            )
+        else:
+            self.success_emotion_threshold = 0.2
+            self.success_trust_threshold = 0.6
+            self.failure_emotion_threshold = -0.9
+            self.failure_trust_threshold = 0.1
 
         # Episode tracking
         self.current_step = 0
@@ -192,21 +218,27 @@ class RelationshipEnv(gym.Env):
             self.state, action_type, self.current_agent, self.recovery_rate
         )
 
-        # Compute reward
-        reward = self._compute_reward(prev_state, self.state, action_type)
-
         # Update step and agent turn
         self.current_step += 1
         self.current_agent = 1 - self.current_agent  # Alternate between A and B
 
         # Check termination conditions
         terminated, termination_reason = self._check_termination()
+        truncated = self.current_step >= self.max_episode_steps
+
+        # Set termination reason
         if terminated:
             self.termination_reason = termination_reason
-
-        truncated = self.current_step >= self.max_episode_steps
-        if truncated and not terminated:
+        elif truncated:
             self.termination_reason = "NEUTRAL"
+            # For stalemate (truncated), we should still mark as terminal for Deep RL reward
+            terminated = True  # Mark as terminated for stalemate
+            termination_reason = "NEUTRAL"
+
+        # Compute reward (pass termination info for Deep RL reward)
+        reward = self._compute_reward(
+            prev_state, self.state, action_type, terminated, termination_reason
+        )
 
         # Get observation and info
         obs = self._get_observation()
@@ -231,23 +263,36 @@ class RelationshipEnv(gym.Env):
         prev_state: RelationshipState,
         curr_state: RelationshipState,
         action: ActionType,
+        is_terminal: bool = False,
+        termination_reason: Optional[str] = None,
     ) -> float:
         """
         Compute reward based on state changes and action quality.
 
-        Reward components:
-        1. Emotion improvement: Δemotion_level
-        2. Trust improvement: Δtrust_level
-        3. Action quality bonus: based on action type (positive/negative)
+        If use_deep_rl_reward is True, uses the 4-part Deep RL reward design:
+        1. Continuous state change reward
+        2. Action-level reward (cooperative/aggressive/withdraw)
+        3. Termination reward (success/failure/stalemate)
+        4. Reward clipping to [-3.0, 3.0]
+
+        Otherwise, uses the original reward function.
 
         Args:
             prev_state: State before action
             curr_state: State after action
             action: Action taken
+            is_terminal: Whether episode terminated
+            termination_reason: Reason for termination (SUCCESS/FAILURE/NEUTRAL)
 
         Returns:
-            Reward value
+            Reward value (clipped to [-3.0, 3.0] for Deep RL)
         """
+        if self.use_deep_rl_reward:
+            return self._compute_deep_rl_reward(
+                prev_state, curr_state, action, is_terminal, termination_reason
+            )
+
+        # Original reward function for Shallow RL
         # Immediate reward from state changes
         delta_emotion = curr_state.emotion_level - prev_state.emotion_level
         delta_trust = curr_state.trust_level - prev_state.trust_level
@@ -258,7 +303,6 @@ class RelationshipEnv(gym.Env):
         )
 
         # Action quality bonus
-        # Fixed: Increased penalty for negative actions to discourage them
         from .actions import POSITIVE_ACTIONS, NEGATIVE_ACTIONS
 
         action_bonus = 0.0
@@ -269,6 +313,85 @@ class RelationshipEnv(gym.Env):
             action_bonus = -self.reward_weights["action_bonus"] * 3.0
 
         return immediate_reward + action_bonus
+
+    def _compute_deep_rl_reward(
+        self,
+        prev_state: RelationshipState,
+        curr_state: RelationshipState,
+        action: ActionType,
+        is_terminal: bool = False,
+        termination_reason: Optional[str] = None,
+    ) -> float:
+        """
+        Compute Deep RL reward using 4-part design.
+
+        Reward components:
+        1. Continuous state change: 1.0 * Δemotion + 1.0 * Δtrust - 0.5 * Δconflict
+        2. Action-level: cooperative +0.05, aggressive -0.05, withdraw depends on conflict
+        3. Termination: success +2.0, failure -2.0, stalemate -0.2
+        4. Clipping: clip to [-3.0, 3.0]
+
+        Args:
+            prev_state: State before action
+            curr_state: State after action
+            action: Action taken
+            is_terminal: Whether episode terminated
+            termination_reason: Reason for termination
+
+        Returns:
+            Reward value clipped to [-3.0, 3.0]
+        """
+        from .actions import ActionType
+
+        # 1. Continuous state change reward
+        delta_emotion = curr_state.emotion_level - prev_state.emotion_level
+        delta_trust = curr_state.trust_level - prev_state.trust_level
+        delta_conflict = curr_state.conflict_intensity - prev_state.conflict_intensity
+
+        r_state = 1.0 * delta_emotion + 1.0 * delta_trust - 0.5 * delta_conflict
+
+        # 2. Action-level reward
+        COOPERATIVE_ACTIONS = {
+            ActionType.APOLOGIZE,
+            ActionType.EMPATHIZE,
+            ActionType.REASSURE,
+            ActionType.SUGGEST_SOLUTION,
+            ActionType.ASK_FOR_NEEDS,
+        }
+        AGGRESSIVE_ACTIONS = {
+            ActionType.DEFENSIVE,
+            ActionType.BLAME,
+        }
+        WITHDRAW_ACTIONS = {
+            ActionType.WITHDRAW,
+            ActionType.CHANGE_TOPIC,
+        }
+
+        r_action = 0.0
+        if action in COOPERATIVE_ACTIONS:
+            r_action = 0.05
+        elif action in AGGRESSIVE_ACTIONS:
+            r_action = -0.05
+        elif action in WITHDRAW_ACTIONS:
+            # High conflict (>= 0.6) -> +0.02, otherwise -0.02
+            if prev_state.conflict_intensity >= 0.6:
+                r_action = 0.02
+            else:
+                r_action = -0.02
+
+        # 3. Termination reward
+        r_terminal = 0.0
+        if is_terminal and termination_reason:
+            if termination_reason == "SUCCESS":
+                r_terminal = 2.0
+            elif termination_reason == "FAILURE":
+                r_terminal = -2.0
+            elif termination_reason == "NEUTRAL":
+                r_terminal = -0.2
+
+        # 4. Total reward with clipping
+        total_reward = r_state + r_action + r_terminal
+        return np.clip(total_reward, -3.0, 3.0)
 
     def _compute_final_reward(self) -> float:
         """
@@ -299,11 +422,14 @@ class RelationshipEnv(gym.Env):
         """
         Check if episode should terminate early and return termination reason.
 
-        Termination conditions:
-        1. SUCCESS: emotion > 0.7 AND trust > 0.75 (relationship repaired)
-        2. FAILURE: emotion < -0.9 OR trust < 0.1 (relationship broken)
-           Fixed: Relaxed thresholds to prevent immediate termination
-        3. NEUTRAL: max steps reached (no clear resolution)
+        Termination conditions (configurable via thresholds):
+        1. SUCCESS: emotion > success_emotion_threshold AND trust > success_trust_threshold
+        2. FAILURE: emotion < failure_emotion_threshold OR trust < failure_trust_threshold
+        3. NEUTRAL: max steps reached (no clear resolution - stalemate)
+
+        Default thresholds (can be customized):
+        - SUCCESS: emotion > 0.2 AND trust > 0.6 (moderate repair)
+        - FAILURE: emotion < -0.9 OR trust < 0.1 (extreme conflict)
 
         Returns:
             Tuple of (terminated: bool, reason: Optional[str])
@@ -311,13 +437,18 @@ class RelationshipEnv(gym.Env):
         if self.state is None:
             return False, None
 
-        # Positive termination: relationship repaired
-        if self.state.emotion_level > 0.7 and self.state.trust_level > 0.75:
+        # Positive termination: relationship repaired (moderate repair threshold)
+        if (
+            self.state.emotion_level > self.success_emotion_threshold
+            and self.state.trust_level > self.success_trust_threshold
+        ):
             return True, "SUCCESS"
 
-        # Negative termination: relationship broken
-        # Fixed: Relaxed thresholds from -0.8/0.2 to -0.9/0.1 to prevent immediate termination
-        if self.state.emotion_level < -0.9 or self.state.trust_level < 0.1:
+        # Negative termination: relationship broken (extreme conflict threshold)
+        if (
+            self.state.emotion_level < self.failure_emotion_threshold
+            or self.state.trust_level < self.failure_trust_threshold
+        ):
             return True, "FAILURE"
 
         return False, None

@@ -70,22 +70,29 @@ EXPERIMENT_CHECKPOINTS = {
     },
     "D2": {
         "type": "dqn",
-        "checkpoint_a": "./experiments/D2/checkpoints/agent_a_ep5000.pth",
-        "checkpoint_b": "./experiments/D2/checkpoints/agent_b_ep5000.pth",
+        "checkpoint_a": "./experiments/D2/checkpoints/agent_a_ep8000.pth",
+        "checkpoint_b": "./experiments/D2/checkpoints/agent_b_ep8000.pth",
         "personality_a": "impulsive",
         "personality_b": "sensitive",
     },
     "D3": {
-        "type": "ppo",
-        "checkpoint_a": "./experiments/D3/checkpoints/agent_a_ep5000.pth",
-        "checkpoint_b": "./experiments/D3/checkpoints/agent_b_ep5000.pth",
+        "type": "dqn",
+        "checkpoint_a": "./experiments/D3/checkpoints/agent_a_ep8000.pth",
+        "checkpoint_b": "./experiments/D3/checkpoints/agent_b_ep8000.pth",
         "personality_a": "impulsive",
-        "personality_b": "sensitive",
+        "personality_b": "impulsive",
     },
     "D4": {
-        "type": "ppo",
-        "checkpoint_a": "./experiments/D4/checkpoints/agent_a_ep5000.pth",
-        "checkpoint_b": "./experiments/D4/checkpoints/agent_b_ep5000.pth",
+        "type": "dqn",
+        "checkpoint_a": "./experiments/D4/checkpoints/agent_a_ep8000.pth",
+        "checkpoint_b": "./experiments/D4/checkpoints/agent_b_ep8000.pth",
+        "personality_a": "neutral",
+        "personality_b": "avoidant",
+    },
+    "D5": {
+        "type": "dqn",
+        "checkpoint_a": "./experiments/D5/checkpoints/agent_a_ep8000.pth",
+        "checkpoint_b": "./experiments/D5/checkpoints/agent_b_ep8000.pth",
         "personality_a": "sensitive",
         "personality_b": "sensitive",
     },
@@ -110,27 +117,46 @@ def evaluate_experiment(exp_id, config, num_episodes, output_dir):
             )
             return False
 
-    cmd = [
-        "python",
-        "scripts/evaluate.py",
-        "--agent_type",
-        config["type"],
-        "--checkpoint_a",
-        config["checkpoint_a"],
-        "--personality_a",
-        config["personality_a"],
-        "--personality_b",
-        config["personality_b"],
-        "--num_episodes",
-        str(num_episodes),
-        "--history_length",
-        "10",
-    ]
-
-    if config["checkpoint_b"]:
-        cmd.extend(["--checkpoint_b", config["checkpoint_b"]])
-
-    log_file = Path(output_dir) / f"evaluation_{exp_id}.txt"
+    # Determine which evaluation script to use
+    if config["type"] in ["q_learning", "sarsa"]:
+        script = "scripts/evaluate_shallow.py"
+        cmd = [
+            "python",
+            script,
+            "--agent_type",
+            config["type"],
+            "--checkpoint_a",
+            config["checkpoint_a"],
+            "--personality_a",
+            config["personality_a"],
+            "--personality_b",
+            config["personality_b"],
+            "--num_episodes",
+            str(num_episodes),
+        ]
+        if config["checkpoint_b"]:
+            cmd.extend(["--checkpoint_b", config["checkpoint_b"]])
+        log_file = Path(output_dir) / f"evaluation_{exp_id}.txt"
+    elif config["type"] == "dqn":
+        script = "scripts/evaluate_deep.py"
+        # Deep RL evaluation script uses --experiment parameter
+        cmd = [
+            "python",
+            script,
+            "--experiment",
+            exp_id,
+            "--checkpoint_dir",
+            "./experiments",
+            "--num_episodes",
+            str(num_episodes),
+            "--output_dir",
+            output_dir,
+        ]
+        log_file = Path(output_dir) / exp_id / f"evaluation_deep_{exp_id}.txt"
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        print(f"[SKIP] Unknown agent type for {exp_id}: {config['type']}")
+        return False
 
     try:
         with open(log_file, "w") as f:
