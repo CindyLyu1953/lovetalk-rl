@@ -38,12 +38,12 @@ DQN_CONFIG = {
     "target_update_freq": 200,
 }
 
-# Termination thresholds for moderate repair
+# Termination thresholds for moderate repair (updated to match environment)
 TERMINATION_THRESHOLDS = {
-    "success_emotion": 0.2,  # Moderate repair (from negative to slightly positive)
-    "success_trust": 0.6,  # Moderate trust recovery
-    "failure_emotion": -0.9,  # Extreme conflict
-    "failure_trust": 0.1,  # Very low trust
+    "success_emotion": 0.4,  # Moderate repair (emotion > 0.4)
+    "success_trust": 0.6,  # Moderate trust recovery (trust > 0.6)
+    "failure_emotion": -0.5,  # Extreme conflict (emotion < -0.5)
+    "failure_trust": 0.1,  # Very low trust (trust < 0.1)
 }
 
 # Training configuration
@@ -121,9 +121,11 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
         num_episodes: Number of episodes to train (if None, uses TRAINING_CONFIG default)
     """
     config = get_experiment_config(exp_id)
-    
+
     # Use provided num_episodes or default from TRAINING_CONFIG
-    episodes_to_train = num_episodes if num_episodes is not None else TRAINING_CONFIG["num_episodes"]
+    episodes_to_train = (
+        num_episodes if num_episodes is not None else TRAINING_CONFIG["num_episodes"]
+    )
     print(f"\n{'='*80}")
     print(f"Training Experiment {exp_id}: {config['description']}")
     print(f"{'='*80}\n")
@@ -140,7 +142,7 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
 
         # Create environment with Deep RL reward and optimized termination
         env = RelationshipEnv(
-            max_episode_steps=20,
+            max_episode_steps=50,
             use_history=True,  # Deep RL uses history
             history_length=10,
             initial_emotion=-0.2,  # Slightly negative (conflict scenario)
@@ -154,10 +156,11 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
             termination_thresholds=TERMINATION_THRESHOLDS,
         )
 
-
         # Debug: Print initial state for this run
         test_obs, test_info = env.reset(seed=run_seed)
-        print(f"[Run {run_idx+1}/{repeats}] Initial Environment State (seed={run_seed}):")
+        print(
+            f"[Run {run_idx+1}/{repeats}] Initial Environment State (seed={run_seed}):"
+        )
         print(f"  Emotion: {test_info['emotion']:.3f}")
         print(f"  Trust: {test_info['trust']:.3f}")
         print(f"  Conflict: {test_info['conflict']:.3f}")
@@ -171,7 +174,7 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
         obs, _ = env.reset(seed=run_seed)
         state_dim = len(obs)
 
-    # Create agents with optimized DQN parameters
+        # Create agents with optimized DQN parameters
         personality_a = PersonalityType[config["personality_a"].upper()]
         personality_b = PersonalityType[config["personality_b"].upper()]
 
@@ -180,32 +183,32 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
         env.personality_b = personality_b
 
         agent_a = DQNAgent(
-        state_dim=state_dim,
-        action_dim=10,
-        personality=personality_a,
-        learning_rate=DQN_CONFIG["learning_rate"],
-        discount_factor=DQN_CONFIG["discount_factor"],
-        epsilon=DQN_CONFIG["epsilon"],
-        epsilon_decay=DQN_CONFIG["epsilon_decay"],
-        epsilon_min=DQN_CONFIG["epsilon_min"],
-        batch_size=DQN_CONFIG["batch_size"],
-        memory_size=DQN_CONFIG["memory_size"],
-        target_update_freq=DQN_CONFIG["target_update_freq"],
-    )
+            state_dim=state_dim,
+            action_dim=10,
+            personality=personality_a,
+            learning_rate=DQN_CONFIG["learning_rate"],
+            discount_factor=DQN_CONFIG["discount_factor"],
+            epsilon=DQN_CONFIG["epsilon"],
+            epsilon_decay=DQN_CONFIG["epsilon_decay"],
+            epsilon_min=DQN_CONFIG["epsilon_min"],
+            batch_size=DQN_CONFIG["batch_size"],
+            memory_size=DQN_CONFIG["memory_size"],
+            target_update_freq=DQN_CONFIG["target_update_freq"],
+        )
 
         agent_b = DQNAgent(
-        state_dim=state_dim,
-        action_dim=10,
-        personality=personality_b,
-        learning_rate=DQN_CONFIG["learning_rate"],
-        discount_factor=DQN_CONFIG["discount_factor"],
-        epsilon=DQN_CONFIG["epsilon"],
-        epsilon_decay=DQN_CONFIG["epsilon_decay"],
-        epsilon_min=DQN_CONFIG["epsilon_min"],
-        batch_size=DQN_CONFIG["batch_size"],
-        memory_size=DQN_CONFIG["memory_size"],
-        target_update_freq=DQN_CONFIG["target_update_freq"],
-    )
+            state_dim=state_dim,
+            action_dim=10,
+            personality=personality_b,
+            learning_rate=DQN_CONFIG["learning_rate"],
+            discount_factor=DQN_CONFIG["discount_factor"],
+            epsilon=DQN_CONFIG["epsilon"],
+            epsilon_decay=DQN_CONFIG["epsilon_decay"],
+            epsilon_min=DQN_CONFIG["epsilon_min"],
+            batch_size=DQN_CONFIG["batch_size"],
+            memory_size=DQN_CONFIG["memory_size"],
+            target_update_freq=DQN_CONFIG["target_update_freq"],
+        )
 
         # Create trainer (per-run save_dir)
         trainer = MultiAgentTrainer(
@@ -232,6 +235,7 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
 
         # Save per-run statistics for later aggregation
         import json
+
         stats = trainer.get_statistics()
         # Convert numpy arrays to lists where necessary
         stats_serializable = {}
@@ -242,8 +246,12 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
             elif isinstance(v, list):
                 # Only convert numeric values, skip dicts and other complex types
                 stats_serializable[k] = [
-                    float(x) if isinstance(x, (int, float, np.number)) and not isinstance(x, (dict, list))
-                    else (list(x) if isinstance(x, np.ndarray) else x)
+                    (
+                        float(x)
+                        if isinstance(x, (int, float, np.number))
+                        and not isinstance(x, (dict, list))
+                        else (list(x) if isinstance(x, np.ndarray) else x)
+                    )
                     for x in v
                 ]
             else:

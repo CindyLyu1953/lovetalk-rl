@@ -34,7 +34,7 @@ class RelationshipEnv(gym.Env):
 
     def __init__(
         self,
-        max_episode_steps: int = 20,
+        max_episode_steps: int = 50,
         history_length: int = 10,
         use_history: bool = False,
         initial_emotion: float = -0.3,
@@ -49,12 +49,13 @@ class RelationshipEnv(gym.Env):
         feasibility_beta: float = 1.0,
         use_deep_rl_reward: bool = False,
         termination_thresholds: Dict[str, float] = None,
+        cross_agent_calmness_factor: float = 0.6,
     ):
         """
         Initialize relationship communication environment.
 
         Args:
-            max_episode_steps: Maximum number of steps per episode (default: 20)
+            max_episode_steps: Maximum number of steps per episode (default: 50)
             history_length: Length of action history for deep RL (default: 10)
             use_history: Whether to include action history in state (default: False)
             initial_emotion: Initial emotion level (default: -0.3, slightly negative)
@@ -67,6 +68,9 @@ class RelationshipEnv(gym.Env):
             reward_weights: Weights for reward components (default: balanced)
             feasibility_alpha: Weight for calmness in action feasibility (default: 1.0)
             feasibility_beta: Weight for action difficulty (default: 1.0)
+            cross_agent_calmness_factor: Factor for cross-agent calmness influence (default: 0.6)
+                                        When agent A takes an action, agent B's calmness is
+                                        affected by delta_calmness * this_factor
         """
         super().__init__()
 
@@ -97,24 +101,30 @@ class RelationshipEnv(gym.Env):
         # Flag to use Deep RL reward function
         self.use_deep_rl_reward = use_deep_rl_reward
 
+        # Cross-agent calmness influence factor
+        # When one agent takes an action, the other agent's calmness is affected
+        # by delta_calmness * cross_agent_calmness_factor
+        # This allows positive actions to help both agents recover from low calmness
+        self.cross_agent_calmness_factor = cross_agent_calmness_factor
+
         # Termination thresholds (can be customized)
         if termination_thresholds:
             self.success_emotion_threshold = termination_thresholds.get(
-                "success_emotion", 0.2
+                "success_emotion", 0.4
             )
             self.success_trust_threshold = termination_thresholds.get(
                 "success_trust", 0.6
             )
             self.failure_emotion_threshold = termination_thresholds.get(
-                "failure_emotion", -0.9
+                "failure_emotion", -0.5
             )
             self.failure_trust_threshold = termination_thresholds.get(
                 "failure_trust", 0.1
             )
         else:
-            self.success_emotion_threshold = 0.2
+            self.success_emotion_threshold = 0.4
             self.success_trust_threshold = 0.6
-            self.failure_emotion_threshold = -0.9
+            self.failure_emotion_threshold = -0.5
             self.failure_trust_threshold = 0.1
 
         # Episode tracking
@@ -239,6 +249,7 @@ class RelationshipEnv(gym.Env):
             self.recovery_rate,
             personality=agent_personality,
             rng=self._rng,
+            cross_agent_calmness_factor=self.cross_agent_calmness_factor,
         )
 
         # Update step and agent turn
@@ -323,10 +334,9 @@ class RelationshipEnv(gym.Env):
         # Increased weight for emotion to encourage improvement from negative values
         emotion_weight = self.reward_weights["emotion"] * 1.5  # Increase emotion weight
         immediate_reward = (
-            emotion_weight * delta_emotion
-            + self.reward_weights["trust"] * delta_trust
+            emotion_weight * delta_emotion + self.reward_weights["trust"] * delta_trust
         )
-        
+
         # Bonus for crossing emotion threshold from negative to positive
         emotion_crossing_bonus = 0.0
         if prev_state.emotion_level < 0 and curr_state.emotion_level >= 0:
@@ -348,7 +358,19 @@ class RelationshipEnv(gym.Env):
             # Increased penalty for negative actions (3x instead of 1x)
             action_bonus = -self.reward_weights["action_bonus"] * 3.0
 
-        return immediate_reward + action_bonus + emotion_crossing_bonus
+        # Termination reward for Shallow RL (increased to strongly encourage success and discourage failure)
+        termination_bonus = 0.0
+        if is_terminal and termination_reason:
+            if termination_reason == "SUCCESS":
+                termination_bonus = 4.0  # Increased from 2.0 to 4.0 (doubled)
+            elif termination_reason == "FAILURE":
+                termination_bonus = -4.0  # Increased from -2.0 to -4.0 (doubled)
+            elif termination_reason == "NEUTRAL":
+                termination_bonus = -0.2  # Small penalty for stalemate
+
+        return (
+            immediate_reward + action_bonus + emotion_crossing_bonus + termination_bonus
+        )
 
     def _compute_deep_rl_reward(
         self,
@@ -362,11 +384,14 @@ class RelationshipEnv(gym.Env):
         Compute Deep RL reward using 4-part design.
 
         Reward components:
-        1. Continuous state change: 1.5 * Δemotion + 1.0 * Δtrust - 0.5 * Δconflict
-        2. Emotion crossing bonus: +0.3 when emotion crosses from negative to positive
-        3. Action-level: cooperative +0.15 (or +0.25 if emotion < 0), aggressive -0.15, withdraw depends on conflict
-        4. Termination: success +2.0, failure -2.0, stalemate -0.2
-        5. Clipping: clip to [-3.0, 3.0]
+        1. Continuous state change:
+           - When emotion < 0: 3.0 * Δemotion + 1.0 * Δtrust - 0.5 * Δconflict (higher weight for recovery)
+           - When emotion >= 0: 2.5 * Δemotion + 1.0 * Δtrust - 0.5 * Δconflict
+        2. Emotion crossing bonus: +0.6 when emotion crosses from negative to positive
+        3. Emotion progress bonus: Progressive reward when emotion is negative but improving (up to +0.2)
+        4. Action-level: cooperative +0.20 (or +0.45 if emotion < 0), aggressive -0.20, withdraw depends on conflict
+        5. Termination: success +4.0, failure -4.0, stalemate -0.2
+        6. Clipping: clip to [-5.0, 5.0]
 
         Args:
             prev_state: State before action
@@ -385,13 +410,41 @@ class RelationshipEnv(gym.Env):
         delta_trust = curr_state.trust_level - prev_state.trust_level
         delta_conflict = curr_state.conflict_intensity - prev_state.conflict_intensity
 
-        # Increased weight for emotion to encourage improvement from negative values
-        r_state = 1.5 * delta_emotion + 1.0 * delta_trust - 0.5 * delta_conflict
-        
+        # Increased weight for emotion to strongly encourage improvement from negative values
+        # Use higher weight (3.0) when emotion is negative, normal weight (2.5) otherwise
+        if prev_state.emotion_level < 0:
+            emotion_weight = (
+                3.0  # Higher weight when emotion is negative to encourage recovery
+            )
+        else:
+            emotion_weight = (
+                2.5  # Still higher than trust to prioritize emotion improvement
+            )
+
+        r_state = (
+            emotion_weight * delta_emotion + 1.0 * delta_trust - 0.5 * delta_conflict
+        )
+
         # Bonus for crossing emotion threshold from negative to positive
         emotion_crossing_bonus = 0.0
         if prev_state.emotion_level < 0 and curr_state.emotion_level >= 0:
-            emotion_crossing_bonus = 0.3  # Bonus for crossing from negative to positive
+            emotion_crossing_bonus = 0.6  # Increased from 0.3 to 0.6 (doubled)
+
+        # Progressive bonus for emotion improvement when still negative but getting closer to 0
+        # This encourages incremental progress even before crossing to positive
+        emotion_progress_bonus = 0.0
+        if prev_state.emotion_level < 0 and curr_state.emotion_level < 0:
+            # Reward progress toward 0 when emotion is still negative
+            if delta_emotion > 0:  # Only reward positive progress
+                # Bonus scales with how much progress is made
+                # Max bonus when improving from very negative (e.g., -0.5) toward 0
+                progress_bonus_scale = (
+                    abs(prev_state.emotion_level) * 0.3
+                )  # Scale with how negative it was
+                emotion_progress_bonus = progress_bonus_scale * (
+                    delta_emotion / 0.3
+                )  # Normalize by typical improvement
+                emotion_progress_bonus = min(emotion_progress_bonus, 0.2)  # Cap at 0.2
 
         # 2. Action-level reward (increased to encourage cooperative actions)
         COOPERATIVE_ACTIONS = {
@@ -413,14 +466,17 @@ class RelationshipEnv(gym.Env):
         r_action = 0.0
         if action in COOPERATIVE_ACTIONS:
             # Increased reward for cooperative actions, especially when emotion is negative
-            base_reward = 0.15  # Increased from 0.05
+            base_reward = 0.20  # Increased from 0.15 to encourage more positive actions
             if prev_state.emotion_level < 0:
                 # Extra bonus when emotion is negative to encourage improvement
-                r_action = base_reward + 0.1
+                # Increased from 0.15 to 0.25 to make positive actions even more attractive
+                r_action = base_reward + 0.25  # Increased from 0.15 to 0.25
             else:
                 r_action = base_reward
         elif action in AGGRESSIVE_ACTIONS:
-            r_action = -0.15  # Increased penalty from -0.05
+            r_action = (
+                -0.20
+            )  # Increased penalty from -0.15 to discourage negative actions
         elif action in WITHDRAW_ACTIONS:
             # High conflict (>= 0.6) -> +0.02, otherwise -0.02
             if prev_state.conflict_intensity >= 0.6:
@@ -428,19 +484,27 @@ class RelationshipEnv(gym.Env):
             else:
                 r_action = -0.05  # Increased penalty from -0.02
 
-        # 3. Termination reward
+        # 3. Termination reward (increased to strongly encourage success and discourage failure)
         r_terminal = 0.0
         if is_terminal and termination_reason:
             if termination_reason == "SUCCESS":
-                r_terminal = 2.0
+                r_terminal = 4.0  # Increased from 2.0 to 4.0 (doubled)
             elif termination_reason == "FAILURE":
-                r_terminal = -2.0
+                r_terminal = -4.0  # Increased from -2.0 to -4.0 (doubled)
             elif termination_reason == "NEUTRAL":
                 r_terminal = -0.2
 
-        # 4. Total reward with clipping
-        total_reward = r_state + r_action + r_terminal + emotion_crossing_bonus
-        return np.clip(total_reward, -3.0, 3.0)
+        # 4. Total reward with clipping (increased range to accommodate larger termination rewards)
+        total_reward = (
+            r_state
+            + r_action
+            + r_terminal
+            + emotion_crossing_bonus
+            + emotion_progress_bonus
+        )
+        return np.clip(
+            total_reward, -5.0, 5.0
+        )  # Increased from [-3.0, 3.0] to [-5.0, 5.0]
 
     def _compute_final_reward(self) -> float:
         """
@@ -477,8 +541,8 @@ class RelationshipEnv(gym.Env):
         3. NEUTRAL: max steps reached (no clear resolution - stalemate)
 
         Default thresholds (can be customized):
-        - SUCCESS: emotion > 0.2 AND trust > 0.6 (moderate repair)
-        - FAILURE: emotion < -0.9 OR trust < 0.1 (extreme conflict)
+        - SUCCESS: emotion > 0.4 AND trust > 0.6 (moderate repair)
+        - FAILURE: emotion < -0.5 OR trust < 0.1 (extreme conflict)
 
         Returns:
             Tuple of (terminated: bool, reason: Optional[str])

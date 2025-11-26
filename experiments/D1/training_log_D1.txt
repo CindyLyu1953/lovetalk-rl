@@ -1,0 +1,323 @@
+
+Initial Environment State:
+  Emotion: -0.200
+  Trust: 0.600
+  Conflict: 0.300
+  Calmness A: 0.600
+  Calmness B: 0.600
+  Initial Termination Check: False, Reason: None
+
+Training dqn agents...
+  Personality A: neutral
+  Personality B: neutral
+  Training mode: self_play
+  Episodes: 5000
+  State dimension: 14
+Starting training: 5000 episodes, mode: self_play
+
+Episode 100
+  Agent A - Avg Reward: -0.852
+  Agent B - Avg Reward: -0.575
+  Avg Episode Length: 6.4
+  Final State - Emotion: -0.502, Trust: 0.269, Conflict: 0.702
+
+Episode 200
+  Agent A - Avg Reward: -1.411
+  Agent B - Avg Reward: -0.847
+  Avg Episode Length: 4.0
+  Final State - Emotion: -0.922, Trust: 0.047, Conflict: 0.938
+
+Episode 300
+  Agent A - Avg Reward: -1.520
+  Agent B - Avg Reward: -0.720
+  Avg Episode Length: 3.3
+  Final State - Emotion: -0.946, Trust: 0.023, Conflict: 0.962
+
+Episode 400
+  Agent A - Avg Reward: -0.980
+  Agent B - Avg Reward: -1.329
+  Avg Episode Length: 4.8
+  Final State - Emotion: -0.970, Trust: 0.133, Conflict: 0.918
+
+Episode 500
+  Agent A - Avg Reward: 0.052
+  Agent B - Avg Reward: -2.259
+  Avg Episode Length: 6.7
+  Final State - Emotion: -0.952, Trust: 0.333, Conflict: 0.810
+
+Episode 600
+  Agent A - Avg Reward: 0.005
+  Agent B - Avg Reward: -2.291
+  Avg Episode Length: 8.8
+  Final State - Emotion: -0.915, Trust: 0.354, Conflict: 0.781
+
+Episode 700
+  Agent A - Avg Reward: -0.181
+  Agent B - Avg Reward: -2.139
+  Avg Episode Length: 9.2
+  Final State - Emotion: -0.833, Trust: 0.296, Conflict: 0.769
+
+Episode 800
+  Agent A - Avg Reward: -0.000
+  Agent B - Avg Reward: -2.210
+  Avg Episode Length: 11.6
+  Final State - Emotion: -0.732, Trust: 0.460, Conflict: 0.641
+
+Episode 900
+  Agent A - Avg Reward: 0.445
+  Agent B - Avg Reward: -3.018
+  Avg Episode Length: 17.3
+  Final State - Emotion: -0.579, Trust: 0.551, Conflict: 0.520
+
+Episode 1000
+  Agent A - Avg Reward: 0.578
+  Agent B - Avg Reward: -3.067
+  Avg Episode Length: 17.6
+  Final State - Emotion: -0.553, Trust: 0.611, Conflict: 0.477
+Checkpoints saved at episode 1000
+
+Episode 1100
+  Agent A - Avg Reward: 0.516
+  Agent B - Avg Reward: -2.684
+  Avg Episode Length: 16.5
+  Final State - Emotion: -0.510, Trust: 0.670, Conflict: 0.422
+
+Episode 1200
+  Agent A - Avg Reward: 0.414
+  Agent B - Avg Reward: -2.850
+  Avg Episode Length: 16.4
+  Final State - Emotion: -0.622, Trust: 0.560, Conflict: 0.531
+
+Episode 1300
+  Agent A - Avg Reward: 0.527
+  Agent B - Avg Reward: -3.041
+  Avg Episode Length: 17.4
+  Final State - Emotion: -0.496, Trust: 0.506, Conflict: 0.497
+
+Episode 1400
+  Agent A - Avg Reward: 0.107
+  Agent B - Avg Reward: -2.465
+  Avg Episode Length: 15.4
+  Final State - Emotion: -0.515, Trust: 0.482, Conflict: 0.518
+
+Episode 1500
+  Agent A - Avg Reward: -0.125
+  Agent B - Avg Reward: -2.177
+  Avg Episode Length: 16.9
+  Final State - Emotion: -0.405, Trust: 0.536, Conflict: 0.442
+
+Episode 1600
+  Agent A - Avg Reward: -1.201
+  Agent B - Avg Reward: -1.171
+  Avg Episode Length: 18.6
+  Final State - Emotion: -0.386, Trust: 0.580, Conflict: 0.420
+
+Episode 1700
+  Agent A - Avg Reward: -1.425
+  Agent B - Avg Reward: -0.786
+  Avg Episode Length: 19.4
+  Final State - Emotion: -0.224, Trust: 0.606, Conflict: 0.336
+
+Episode 1800
+  Agent A - Avg Reward: -1.614
+  Agent B - Avg Reward: -0.509
+  Avg Episode Length: 19.8
+  Final State - Emotion: -0.163, Trust: 0.616, Conflict: 0.292
+
+Episode 1900
+  Agent A - Avg Reward: -1.484
+  Agent B - Avg Reward: -0.386
+  Avg Episode Length: 19.9
+  Final State - Emotion: -0.215, Trust: 0.765, Conflict: 0.234
+
+Episode 2000
+  Agent A - Avg Reward: -3.338
+  Agent B - Avg Reward: 0.993
+  Avg Episode Length: 15.7
+  Final State - Emotion: -0.777, Trust: 0.676, Conflict: 0.551
+Checkpoints saved at episode 2000
+
+Episode 2100
+  Agent A - Avg Reward: -3.514
+  Agent B - Avg Reward: 1.348
+  Avg Episode Length: 13.9
+  Final State - Emotion: -0.850, Trust: 0.728, Conflict: 0.562
+
+Episode 2200
+  Agent A - Avg Reward: -2.986
+  Agent B - Avg Reward: 0.731
+  Avg Episode Length: 16.4
+  Final State - Emotion: -0.699, Trust: 0.706, Conflict: 0.497
+
+Episode 2300
+  Agent A - Avg Reward: -2.454
+  Agent B - Avg Reward: 0.045
+  Avg Episode Length: 17.6
+  Final State - Emotion: -0.640, Trust: 0.704, Conflict: 0.468
+
+Episode 2400
+  Agent A - Avg Reward: -1.591
+  Agent B - Avg Reward: -0.699
+  Avg Episode Length: 15.9
+  Final State - Emotion: -0.690, Trust: 0.660, Conflict: 0.515
+
+Episode 2500
+  Agent A - Avg Reward: -1.750
+  Agent B - Avg Reward: -0.529
+  Avg Episode Length: 16.1
+  Final State - Emotion: -0.616, Trust: 0.586, Conflict: 0.515
+
+Episode 2600
+  Agent A - Avg Reward: -1.546
+  Agent B - Avg Reward: -0.815
+  Avg Episode Length: 17.6
+  Final State - Emotion: -0.543, Trust: 0.613, Conflict: 0.465
+
+Episode 2700
+  Agent A - Avg Reward: -1.034
+  Agent B - Avg Reward: -1.410
+  Avg Episode Length: 16.9
+  Final State - Emotion: -0.616, Trust: 0.618, Conflict: 0.499
+
+Episode 2800
+  Agent A - Avg Reward: 0.156
+  Agent B - Avg Reward: -2.662
+  Avg Episode Length: 16.1
+  Final State - Emotion: -0.624, Trust: 0.536, Conflict: 0.544
+
+Episode 2900
+  Agent A - Avg Reward: 1.105
+  Agent B - Avg Reward: -3.766
+  Avg Episode Length: 17.3
+  Final State - Emotion: -0.673, Trust: 0.598, Conflict: 0.537
+
+Episode 3000
+  Agent A - Avg Reward: 1.247
+  Agent B - Avg Reward: -3.921
+  Avg Episode Length: 16.7
+  Final State - Emotion: -0.723, Trust: 0.582, Conflict: 0.571
+Checkpoints saved at episode 3000
+
+Episode 3100
+  Agent A - Avg Reward: 1.426
+  Agent B - Avg Reward: -3.986
+  Avg Episode Length: 16.2
+  Final State - Emotion: -0.690, Trust: 0.592, Conflict: 0.549
+
+Episode 3200
+  Agent A - Avg Reward: 1.428
+  Agent B - Avg Reward: -3.885
+  Avg Episode Length: 16.1
+  Final State - Emotion: -0.632, Trust: 0.603, Conflict: 0.514
+
+Episode 3300
+  Agent A - Avg Reward: 1.044
+  Agent B - Avg Reward: -3.577
+  Avg Episode Length: 16.7
+  Final State - Emotion: -0.611, Trust: 0.581, Conflict: 0.515
+
+Episode 3400
+  Agent A - Avg Reward: 0.962
+  Agent B - Avg Reward: -3.457
+  Avg Episode Length: 16.0
+  Final State - Emotion: -0.653, Trust: 0.591, Conflict: 0.531
+
+Episode 3500
+  Agent A - Avg Reward: 1.250
+  Agent B - Avg Reward: -3.814
+  Avg Episode Length: 16.6
+  Final State - Emotion: -0.657, Trust: 0.591, Conflict: 0.533
+
+Episode 3600
+  Agent A - Avg Reward: 1.336
+  Agent B - Avg Reward: -3.806
+  Avg Episode Length: 15.8
+  Final State - Emotion: -0.675, Trust: 0.601, Conflict: 0.537
+
+Episode 3700
+  Agent A - Avg Reward: -0.139
+  Agent B - Avg Reward: -2.720
+  Avg Episode Length: 15.8
+  Final State - Emotion: -0.728, Trust: 0.415, Conflict: 0.657
+
+Episode 3800
+  Agent A - Avg Reward: -0.164
+  Agent B - Avg Reward: -2.499
+  Avg Episode Length: 15.7
+  Final State - Emotion: -0.660, Trust: 0.481, Conflict: 0.589
+
+Episode 3900
+  Agent A - Avg Reward: -0.059
+  Agent B - Avg Reward: -2.479
+  Avg Episode Length: 16.8
+  Final State - Emotion: -0.633, Trust: 0.633, Conflict: 0.500
+
+Episode 4000
+  Agent A - Avg Reward: 0.774
+  Agent B - Avg Reward: -3.303
+  Avg Episode Length: 16.5
+  Final State - Emotion: -0.699, Trust: 0.652, Conflict: 0.524
+Checkpoints saved at episode 4000
+
+Episode 4100
+  Agent A - Avg Reward: 0.560
+  Agent B - Avg Reward: -3.106
+  Avg Episode Length: 16.4
+  Final State - Emotion: -0.739, Trust: 0.641, Conflict: 0.549
+
+Episode 4200
+  Agent A - Avg Reward: -1.621
+  Agent B - Avg Reward: -1.006
+  Avg Episode Length: 17.3
+  Final State - Emotion: -0.765, Trust: 0.616, Conflict: 0.574
+
+Episode 4300
+  Agent A - Avg Reward: -2.728
+  Agent B - Avg Reward: 0.036
+  Avg Episode Length: 18.1
+  Final State - Emotion: -0.760, Trust: 0.617, Conflict: 0.572
+
+Episode 4400
+  Agent A - Avg Reward: -3.119
+  Agent B - Avg Reward: 0.461
+  Avg Episode Length: 17.9
+  Final State - Emotion: -0.789, Trust: 0.684, Conflict: 0.553
+
+Episode 4500
+  Agent A - Avg Reward: -3.049
+  Agent B - Avg Reward: 0.473
+  Avg Episode Length: 18.1
+  Final State - Emotion: -0.713, Trust: 0.694, Conflict: 0.510
+
+Episode 4600
+  Agent A - Avg Reward: -2.396
+  Agent B - Avg Reward: -0.156
+  Avg Episode Length: 19.9
+  Final State - Emotion: -0.474, Trust: 0.686, Conflict: 0.394
+
+Episode 4700
+  Agent A - Avg Reward: -2.078
+  Agent B - Avg Reward: -0.547
+  Avg Episode Length: 19.5
+  Final State - Emotion: -0.513, Trust: 0.642, Conflict: 0.435
+
+Episode 4800
+  Agent A - Avg Reward: -2.143
+  Agent B - Avg Reward: -0.539
+  Avg Episode Length: 19.6
+  Final State - Emotion: -0.526, Trust: 0.605, Conflict: 0.461
+
+Episode 4900
+  Agent A - Avg Reward: -2.072
+  Agent B - Avg Reward: -0.374
+  Avg Episode Length: 18.3
+  Final State - Emotion: -0.582, Trust: 0.686, Conflict: 0.448
+
+Episode 5000
+  Agent A - Avg Reward: -2.480
+  Agent B - Avg Reward: 0.024
+  Avg Episode Length: 17.3
+  Final State - Emotion: -0.553, Trust: 0.582, Conflict: 0.486
+Checkpoints saved at episode 5000
+
+Training completed!

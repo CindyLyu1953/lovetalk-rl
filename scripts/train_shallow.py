@@ -33,14 +33,30 @@ def main():
         "--personality_a",
         type=str,
         default="neutral",
-        choices=["neutral", "impulsive", "sensitive", "avoidant", "neurotic", "agreeable", "conscientious"],
+        choices=[
+            "neutral",
+            "impulsive",
+            "sensitive",
+            "avoidant",
+            "neurotic",
+            "agreeable",
+            "conscientious",
+        ],
         help="Personality type for agent A",
     )
     parser.add_argument(
         "--personality_b",
         type=str,
         default="neutral",
-        choices=["neutral", "impulsive", "sensitive", "avoidant", "neurotic", "agreeable", "conscientious"],
+        choices=[
+            "neutral",
+            "impulsive",
+            "sensitive",
+            "avoidant",
+            "neurotic",
+            "agreeable",
+            "conscientious",
+        ],
         help="Personality type for agent B",
     )
     parser.add_argument(
@@ -93,7 +109,7 @@ def main():
         run_save_dir.mkdir(parents=True, exist_ok=True)
 
         env = RelationshipEnv(
-            max_episode_steps=20,
+            max_episode_steps=50,
             use_history=False,  # Shallow RL doesn't use history
             initial_emotion=-0.2,  # Slightly negative (conflict scenario, but not too severe)
             initial_trust=0.6,  # Moderate trust (was 0.5, too low)
@@ -110,7 +126,9 @@ def main():
 
         # Debug: Print initial state for this run
         test_obs, test_info = env.reset(seed=run_seed)
-        print(f"\n[Run {run_idx+1}/{repeats}] Initial Environment State (seed={run_seed}):")
+        print(
+            f"\n[Run {run_idx+1}/{repeats}] Initial Environment State (seed={run_seed}):"
+        )
         print(f"  Emotion: {test_info['emotion']:.3f}")
         print(f"  Trust: {test_info['trust']:.3f}")
         print(f"  Conflict: {test_info['conflict']:.3f}")
@@ -172,9 +190,14 @@ def main():
 
         # Save per-run statistics
         import json
+
         stats = trainer.get_statistics()
         with open(Path(run_save_dir) / "train_stats.json", "w") as f:
-            json.dump({"seed": run_seed, "stats": stats}, f, default=lambda o: list(o) if hasattr(o, "__iter__") else o)
+            json.dump(
+                {"seed": run_seed, "stats": stats},
+                f,
+                default=lambda o: list(o) if hasattr(o, "__iter__") else o,
+            )
 
         print(f"[Run {run_idx+1}] Training completed and stats saved to {run_save_dir}")
 

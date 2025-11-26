@@ -80,7 +80,7 @@ def main():
 
     # Create environment (Shallow RL doesn't use history)
     env = RelationshipEnv(
-        max_episode_steps=20,
+        max_episode_steps=50,
         use_history=False,  # Shallow RL doesn't use history
         initial_emotion=-0.2,  # Slightly negative (matching training - conflict scenario)
         initial_trust=0.6,  # Moderate trust (matching training)

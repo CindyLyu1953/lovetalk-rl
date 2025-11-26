@@ -1,0 +1,57 @@
+Evaluating dqn agents...
+  Personality A: impulsive
+  Personality B: sensitive
+  Episodes: 100
+
+============================================================
+Evaluation Results
+============================================================
+Number of Episodes: 100
+
+Rewards:
+  Agent A - Mean: -0.762 ± 0.705
+  Agent B - Mean: -1.799 ± 0.729
+
+Episode Statistics:
+  Average Length: 17.9 steps
+
+Final State Metrics:
+  Emotion: -0.519
+  Trust: 0.552
+  Conflict: 0.483
+
+Termination Rates:
+  Success (Repaired): 0.0%
+  Failure (Broken): 19.0%
+  Neutral (Stalemate): 81.0%
+
+Final Calmness:
+  Agent A: 0.138
+  Agent B: 0.177
+
+Action Distribution (Agent A):
+  APOLOGIZE           :  100 ( 11.2%)
+  EMPATHIZE           :   29 (  3.2%)
+  EXPLAIN             :    0 (  0.0%)
+  REASSURE            :    0 (  0.0%)
+  SUGGEST_SOLUTION    :    0 (  0.0%)
+  ASK_FOR_NEEDS       :  318 ( 35.5%)
+  CHANGE_TOPIC        :    0 (  0.0%)
+  DEFENSIVE           :  197 ( 22.0%)
+  BLAME               :  251 ( 28.0%)
+  WITHDRAW            :    0 (  0.0%)
+
+Action Distribution (Agent B):
+  APOLOGIZE           :  100 ( 11.2%)
+  EMPATHIZE           :   70 (  7.9%)
+  EXPLAIN             :    0 (  0.0%)
+  REASSURE            :   58 (  6.5%)
+  SUGGEST_SOLUTION    :   20 (  2.2%)
+  ASK_FOR_NEEDS       :   96 ( 10.8%)
+  CHANGE_TOPIC        :    0 (  0.0%)
+  DEFENSIVE           :  547 ( 61.4%)
+  BLAME               :    0 (  0.0%)
+  WITHDRAW            :    0 (  0.0%)
+============================================================
+
+Evaluation completed!

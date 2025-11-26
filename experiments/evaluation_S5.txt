@@ -1,0 +1,61 @@
+/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/venv/lib/python3.12/site-packages/gymnasium/spaces/box.py:236: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/venv/lib/python3.12/site-packages/gymnasium/spaces/box.py:306: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+Evaluating q_learning agents...
+  Personality A: sensitive
+  Personality B: sensitive
+  Episodes: 100
+
+============================================================
+Evaluation Results
+============================================================
+Number of Episodes: 100
+
+Rewards:
+  Agent A - Mean: -1.486 ± 0.032
+  Agent B - Mean: -0.750 ± 0.031
+
+Episode Statistics:
+  Average Length: 3.0 steps
+
+Final State Metrics:
+  Emotion: -0.946
+  Trust: 0.011
+  Conflict: 0.968
+
+Termination Rates:
+  Success (Repaired): 0.0%
+  Failure (Broken): 100.0%
+  Neutral (Stalemate): 0.0%
+
+Final Calmness:
+  Agent A: 0.218
+  Agent B: 0.410
+
+Action Distribution (Agent A):
+  APOLOGIZE           :    0 (  0.0%)
+  EMPATHIZE           :    0 (  0.0%)
+  EXPLAIN             :    0 (  0.0%)
+  REASSURE            :    0 (  0.0%)
+  SUGGEST_SOLUTION    :    0 (  0.0%)
+  ASK_FOR_NEEDS       :    0 (  0.0%)
+  CHANGE_TOPIC        :    0 (  0.0%)
+  DEFENSIVE           :  200 (100.0%)
+  BLAME               :    0 (  0.0%)
+  WITHDRAW            :    0 (  0.0%)
+
+Action Distribution (Agent B):
+  APOLOGIZE           :    0 (  0.0%)
+  EMPATHIZE           :    0 (  0.0%)
+  EXPLAIN             :    0 (  0.0%)
+  REASSURE            :    0 (  0.0%)
+  SUGGEST_SOLUTION    :    0 (  0.0%)
+  ASK_FOR_NEEDS       :    0 (  0.0%)
+  CHANGE_TOPIC        :    0 (  0.0%)
+  DEFENSIVE           :  100 (100.0%)
+  BLAME               :    0 (  0.0%)
+  WITHDRAW            :    0 (  0.0%)
+============================================================
+
+Evaluation completed!

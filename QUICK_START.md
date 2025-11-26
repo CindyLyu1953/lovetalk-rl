@@ -163,12 +163,12 @@ experiments/
 **Shallow RL:**
 - **SUCCESS**: `emotion > 0.7 AND trust > 0.75`
 - **FAILURE**: `emotion < -0.9 OR trust < 0.1`
-- **NEUTRAL**: Max steps (20) reached
+- **NEUTRAL**: Max steps (50) reached
 
 **Deep RL (optimized for conflict resolution):**
 - **SUCCESS**: `emotion > 0.2 AND trust > 0.6` (moderate repair)
 - **FAILURE**: `emotion < -0.9 OR trust < 0.1` (extreme conflict)
-- **STALEMATE**: Max steps (20) reached (cold war)
+- **STALEMATE**: Max steps (50) reached (cold war)
 
 ### Algorithms
 - **Shallow RL**: Q-learning, SARSA (tabular methods)

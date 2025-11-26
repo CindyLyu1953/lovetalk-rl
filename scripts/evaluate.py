@@ -104,7 +104,7 @@ def main():
     # Create environment with new parameters
     # Fixed: Use same moderate initial state as training to ensure consistency
     env = RelationshipEnv(
-        max_episode_steps=20,
+        max_episode_steps=50,
         use_history=use_history,
         history_length=args.history_length,
         initial_emotion=-0.2,  # Slightly negative (matching training - conflict scenario)

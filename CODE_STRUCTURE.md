@@ -143,9 +143,13 @@ The environment is a **Gym-like** turn-based two-agent communication simulator.
 #### **`transition_model.py`** - State Dynamics
 - **Class**: `TransitionModel`
 - **Purpose**: Updates state based on actions and personality traits
-- **Key Method**: `update_state(state, action_a, action_b, calmness_a, calmness_b, irritability_a, irritability_b)`
+- **Key Method**: `update_state(state, action, agent_id, recovery_rate, personality, rng, cross_agent_calmness_factor)`
 - Models the psychological effects of actions on relationship state
- - **Sampling**: Action effects are sampled per-run from personality-specific ranges using Beta distributions (configurable via `config/config.yaml`) and the environment supports seeded RNG for reproducibility.
+- **Sampling**: Action effects are sampled per-run from personality-specific ranges using Beta distributions (configurable via `config/config.yaml`) and the environment supports seeded RNG for reproducibility.
+- **Cross-Agent Calmness Influence**: When one agent takes an action, both agents' calmness are affected:
+  - Agent who took the action: full effect (100%)
+  - Other agent: partial effect (60% by default, configurable via `cross_agent_calmness_factor`)
+  - This allows positive actions from one agent to help the other recover from low calmness, breaking negative feedback loops
 
 #### **`action_feasibility.py`** - Action Constraints
 - **Class**: `ActionFeasibility`
@@ -380,7 +384,7 @@ The environment is a **Gym-like** turn-based two-agent communication simulator.
 ### Configuration File (`config/config.yaml`)
 
 **Environment Settings:**
-- `max_episode_steps`: 20
+- `max_episode_steps`: 50
 - Initial state values (emotion, trust, calmness)
 - Termination thresholds
 - Reward weights
@@ -426,6 +430,9 @@ The environment is a **Gym-like** turn-based two-agent communication simulator.
 3. **Experiment-Driven**: Scripts organized around experiment IDs (S1-S6, D1-D5)
 4. **Personality as Bias**: Personality affects perception and action selection, not environment dynamics
 5. **Action Feasibility**: Low calmness increases probability of negative actions (emotional instability)
+6. **Cross-Agent Calmness Influence**: Both agents' calmness are affected by each other's actions
+   - When agent A takes an action, agent B's calmness is also affected (at 60% of the effect)
+   - This allows positive actions from one agent to help the other recover, breaking negative feedback loops
 
 ---
 

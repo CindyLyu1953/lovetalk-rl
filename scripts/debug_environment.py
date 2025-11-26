@@ -22,7 +22,7 @@ def debug_environment():
 
     # Create environment with default settings
     env = RelationshipEnv(
-        max_episode_steps=20,
+        max_episode_steps=50,
         use_history=False,
         initial_emotion=-0.3,
         initial_trust=0.5,

@@ -2,7 +2,7 @@
 
 # Environment Configuration
 environment:
-  max_episode_steps: 20  # Recommended: 12-20 steps per episode
+  max_episode_steps: 50  # Maximum steps per episode (neutral/stalemate termination)
   history_length: 10
   use_history: false  # Set to true for deep RL
   
@@ -21,6 +21,10 @@ environment:
   
   # State update parameters
   recovery_rate: 0.02  # Automatic calmness recovery per step
+  cross_agent_calmness_factor: 0.6  # Factor for cross-agent calmness influence
+                                     # When agent A takes an action, agent B's calmness
+                                     # is affected by delta_calmness * this_factor
+                                     # (default: 0.6 means 60% of the effect)
   
   # Action feasibility parameters
   feasibility_alpha: 1.0  # Weight for calmness in feasibility calculation
@@ -37,12 +41,12 @@ environment:
   trust_clip_range: [0, 1]
   calmness_clip_range: [0, 1]
   
-  # Termination conditions (updated for Deep RL optimization)
+  # Termination conditions (updated for better training signals)
   termination:
-    success_emotion_threshold: 0.2  # Moderate repair (from negative to slightly positive)
-    success_trust_threshold: 0.6  # Moderate trust recovery
-    failure_emotion_threshold: -0.9  # Extreme conflict
-    failure_trust_threshold: 0.1  # Very low trust
+    success_emotion_threshold: 0.4  # Moderate repair (emotion > 0.4)
+    success_trust_threshold: 0.6  # Moderate trust recovery (trust > 0.6)
+    failure_emotion_threshold: -0.5  # Extreme conflict (emotion < -0.5)
+    failure_trust_threshold: 0.1  # Very low trust (trust < 0.1)
 
 # Personality Configuration (legacy, for reference)
 personalities:

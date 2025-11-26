@@ -1,0 +1,34 @@
+
+Initial Environment State:
+  Emotion: -0.200
+  Trust: 0.600
+  Conflict: 0.300
+  Calmness A: 0.600
+  Calmness B: 0.600
+  Initial Termination Check: False, Reason: None
+
+Training ppo agents...
+  Personality A: sensitive
+  Personality B: sensitive
+  Training mode: self_play
+  Episodes: 5000
+  State dimension: 14
+Starting training: 5000 episodes, mode: self_play
+Traceback (most recent call last):
+  File "/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/scripts/train_deep.py", line 165, in <module>
+    main()
+  File "/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/scripts/train_deep.py", line 159, in main
+    trainer.train(args.episodes)
+  File "/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/training/trainer.py", line 128, in train
+    action, log_prob = agent.select_action(obs, training=True)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/agents/deep_rl/ppo.py", line 193, in select_action
+    dist = Categorical(torch.FloatTensor(action_probs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/venv/lib/python3.12/site-packages/torch/distributions/categorical.py", line 81, in __init__
+    super().__init__(batch_shape, validate_args=validate_args)
+  File "/Users/lyukexin/Desktop/DSAN6650/lovetalk-rl/venv/lib/python3.12/site-packages/torch/distributions/distribution.py", line 77, in __init__
+    raise ValueError(
+ValueError: Expected parameter probs (Tensor of shape (10,)) of distribution Categorical(probs: torch.Size([10])) to satisfy the constraint Simplex(), but found invalid values:
+tensor([ 0.0057,  0.0186,  0.0166,  0.0312,  0.0174,  0.0165,  0.0455,  0.3420,
+        -0.0008,  0.5073])

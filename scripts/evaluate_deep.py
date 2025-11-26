@@ -100,7 +100,7 @@ def evaluate_experiment(
 
     # Create environment with Deep RL reward and optimized termination
     env = RelationshipEnv(
-        max_episode_steps=20,
+        max_episode_steps=50,
         use_history=True,  # Deep RL uses history
         history_length=10,
         initial_emotion=-0.2,  # Slightly negative (conflict scenario)
@@ -150,7 +150,9 @@ def evaluate_experiment(
     for episode_idx in range(num_episodes):
         # Alternate first move: even episodes agent_a goes first, odd episodes agent_b goes first
         swap_agents = episode_idx % 2 == 1
-        metrics = evaluator.evaluate_episode(agent_a, agent_b, render=False, swap_agents=swap_agents)
+        metrics = evaluator.evaluate_episode(
+            agent_a, agent_b, render=False, swap_agents=swap_agents
+        )
         episode_results.append(metrics)
 
     # Aggregate results

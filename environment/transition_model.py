@@ -218,15 +218,28 @@ class TransitionModel:
         recovery_rate: float = 0.02,
         personality: PersonalityType = PersonalityType.NEUTRAL,
         rng: np.random.Generator = None,
+        cross_agent_calmness_factor: float = 0.6,
     ) -> "RelationshipState":
         """
         Update relationship state based on action.
+        
+        Now updates calmness for BOTH agents:
+        - Agent who took the action: full effect (delta_calmness)
+        - Other agent: partial effect (delta_calmness * cross_agent_calmness_factor)
+        
+        This allows positive actions from one agent to help the other agent recover
+        from low calmness, breaking negative feedback loops.
 
         Args:
             current_state: Current relationship state
             action: Action taken
             agent_id: Agent ID (0 for A, 1 for B)
             recovery_rate: Automatic calmness recovery rate per step
+            personality: Personality of the agent taking the action
+            rng: Random number generator for sampling
+            cross_agent_calmness_factor: Multiplier for how much the other agent's
+                                        calmness is affected (default: 0.6, meaning
+                                        60% of the effect)
 
         Returns:
             New relationship state after transition
@@ -274,8 +287,16 @@ class TransitionModel:
             conflict_from_emotion + conflict_from_trust, 0.0, 1.0
         )
 
-        # Update calmness for the agent who took the action
+        # Update calmness for BOTH agents
+        # 1. Agent who took the action: full effect
         new_state.update_calmness(agent_id, delta_calmness, recovery_rate)
+        
+        # 2. Other agent: partial effect (reduced by cross_agent_calmness_factor)
+        # This allows one agent's positive actions to help the other recover
+        other_agent_id = 1 - agent_id
+        other_agent_delta_calmness = delta_calmness * cross_agent_calmness_factor
+        # Note: Other agent's recovery is also applied in update_calmness
+        new_state.update_calmness(other_agent_id, other_agent_delta_calmness, recovery_rate)
 
         # Add action to history
         new_state.add_action(action.value)
