@@ -59,7 +59,7 @@ data/
 *.hdf5
 
 # Experiments and results
-experiments/
+# experiments/
 results/
 outputs/
 
@@ -73,3 +73,5 @@ htmlcov/
 
 # Documentation
 docs/_build/
+
+HOW_TO_RUN_PAIRS.md

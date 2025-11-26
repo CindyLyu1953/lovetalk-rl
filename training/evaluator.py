@@ -41,6 +41,7 @@ class Evaluator:
         agent_b: Optional = None,
         render: bool = False,
         max_steps: Optional[int] = None,
+        swap_agents: bool = False,
     ) -> Dict:
         """
         Evaluate a single episode with given agents.
@@ -50,12 +51,21 @@ class Evaluator:
             agent_b: Agent B (if None, uses agent_a as B)
             render: Whether to render episode (default: False)
             max_steps: Maximum steps for evaluation (default: None, uses env default)
+            swap_agents: If True, swap agent_a and agent_b roles to eliminate first-mover advantage
 
         Returns:
             Dictionary containing evaluation metrics
         """
         if agent_b is None:
             agent_b = agent_a
+
+        # Swap agents if requested (to eliminate first-mover advantage)
+        if swap_agents:
+            actual_agent_a = agent_b
+            actual_agent_b = agent_a
+        else:
+            actual_agent_a = agent_a
+            actual_agent_b = agent_b
 
         obs, info = self.env.reset()
         current_agent = 0
@@ -75,7 +85,7 @@ class Evaluator:
         max_steps = max_steps or self.env.max_episode_steps
 
         while not (done or truncated) and step_count < max_steps:
-            agent = agent_a if current_agent == 0 else agent_b
+            agent = actual_agent_a if current_agent == 0 else actual_agent_b
 
             # Select action (no exploration during evaluation)
             if hasattr(agent, "select_action"):
@@ -112,6 +122,25 @@ class Evaluator:
         final_state = info
         termination_reason = final_state.get("termination_reason", "NEUTRAL")
 
+        # If agents were swapped, we need to swap the rewards and actions back
+        # to maintain consistency with the original agent_a/agent_b naming
+        if swap_agents:
+            # Swap rewards and actions
+            episode_data["rewards_a"], episode_data["rewards_b"] = (
+                episode_data["rewards_b"],
+                episode_data["rewards_a"],
+            )
+            episode_data["actions_a"], episode_data["actions_b"] = (
+                episode_data["actions_b"],
+                episode_data["actions_a"],
+            )
+            # Swap calmness values
+            final_calmness_a = final_state.get("calmness_b", 0.5)
+            final_calmness_b = final_state.get("calmness_a", 0.5)
+        else:
+            final_calmness_a = final_state.get("calmness_a", 0.5)
+            final_calmness_b = final_state.get("calmness_b", 0.5)
+
         metrics = {
             "total_reward_a": sum(episode_data["rewards_a"]),
             "total_reward_b": sum(episode_data["rewards_b"]),
@@ -119,8 +148,8 @@ class Evaluator:
             "final_emotion": final_state["emotion"],
             "final_trust": final_state["trust"],
             "final_conflict": final_state["conflict"],
-            "final_calmness_a": final_state.get("calmness_a", 0.5),
-            "final_calmness_b": final_state.get("calmness_b", 0.5),
+            "final_calmness_a": final_calmness_a,
+            "final_calmness_b": final_calmness_b,
             "termination_reason": termination_reason,
             "success": termination_reason == "SUCCESS",
             "failure": termination_reason == "FAILURE",
@@ -137,6 +166,7 @@ class Evaluator:
         agent_b: Optional = None,
         num_episodes: int = 100,
         render: bool = False,
+        alternate_first_move: bool = True,
     ) -> Dict:
         """
         Evaluate agents over multiple episodes.
@@ -146,14 +176,20 @@ class Evaluator:
             agent_b: Agent B (if None, uses agent_a as B)
             num_episodes: Number of episodes to evaluate (default: 100)
             render: Whether to render episodes (default: False)
+            alternate_first_move: If True, alternate which agent goes first to eliminate
+                                  first-mover advantage (default: True)
 
         Returns:
             Dictionary containing aggregated evaluation metrics
         """
         all_metrics = []
 
-        for _ in range(num_episodes):
-            metrics = self.evaluate_episode(agent_a, agent_b, render=render)
+        for episode_idx in range(num_episodes):
+            # Alternate first move to eliminate first-mover advantage
+            swap_agents = alternate_first_move and (episode_idx % 2 == 1)
+            metrics = self.evaluate_episode(
+                agent_a, agent_b, render=render, swap_agents=swap_agents
+            )
             all_metrics.append(metrics)
 
         # Aggregate metrics

@@ -3,16 +3,19 @@ Deep RL Training Script for 5 Conflict Scenarios
 
 Train DQN agents with optimized parameters for human-like conflict resolution:
 - D1: neutral × neutral (baseline)
-- D2: impulsive × sensitive (intense conflict)
-- D3: impulsive × impulsive (extreme conflict)
+- D2: neurotic × agreeable (neurotic vs agreeable)
+- D3: neurotic × neurotic (extreme neurotic conflict)
 - D4: neutral × avoidant (cold war)
-- D5: sensitive × sensitive (mutual misunderstanding)
+- D5: agreeable × conscientious (cooperative scenario)
 """
 
 import argparse
 import sys
 import os
 from pathlib import Path
+from typing import Optional
+import json
+import numpy as np
 
 # Add parent directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -71,18 +74,18 @@ def get_experiment_config(exp_id: str):
             "irritability_b": 0.4,
         },
         "D2": {
-            "personality_a": "impulsive",
-            "personality_b": "sensitive",
-            "description": "Intense conflict (impulsive vs sensitive)",
-            "irritability_a": 0.7,  # Impulsive: high irritability
-            "irritability_b": 0.5,  # Sensitive: moderate-high irritability
+            "personality_a": "neurotic",
+            "personality_b": "agreeable",
+            "description": "Neurotic vs agreeable (conflict scenario)",
+            "irritability_a": 0.5,  # Neurotic: moderate-high irritability
+            "irritability_b": 0.3,  # Agreeable: lower irritability
         },
         "D3": {
-            "personality_a": "impulsive",
-            "personality_b": "impulsive",
-            "description": "Extreme conflict (impulsive vs impulsive)",
-            "irritability_a": 0.7,
-            "irritability_b": 0.7,
+            "personality_a": "neurotic",
+            "personality_b": "neurotic",
+            "description": "Extreme neurotic conflict (neurotic vs neurotic)",
+            "irritability_a": 0.5,
+            "irritability_b": 0.5,
         },
         "D4": {
             "personality_a": "neutral",
@@ -92,11 +95,11 @@ def get_experiment_config(exp_id: str):
             "irritability_b": 0.3,  # Avoidant: lower irritability, but withdraws
         },
         "D5": {
-            "personality_a": "sensitive",
-            "personality_b": "sensitive",
-            "description": "Mutual misunderstanding (sensitive vs sensitive)",
-            "irritability_a": 0.5,
-            "irritability_b": 0.5,
+            "personality_a": "agreeable",
+            "personality_b": "conscientious",
+            "description": "Cooperative scenario (agreeable vs conscientious)",
+            "irritability_a": 0.3,
+            "irritability_b": 0.3,
         },
     }
 
@@ -108,15 +111,19 @@ def get_experiment_config(exp_id: str):
     return configs[exp_id]
 
 
-def train_experiment(exp_id: str, save_dir: str):
+def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = None):
     """
     Train a single experiment.
 
     Args:
         exp_id: Experiment ID (D1-D5)
         save_dir: Directory to save checkpoints
+        num_episodes: Number of episodes to train (if None, uses TRAINING_CONFIG default)
     """
     config = get_experiment_config(exp_id)
+    
+    # Use provided num_episodes or default from TRAINING_CONFIG
+    episodes_to_train = num_episodes if num_episodes is not None else TRAINING_CONFIG["num_episodes"]
     print(f"\n{'='*80}")
     print(f"Training Experiment {exp_id}: {config['description']}")
     print(f"{'='*80}\n")
@@ -217,11 +224,11 @@ def train_experiment(exp_id: str, save_dir: str):
         print(f"  Personality A: {config['personality_a']}")
         print(f"  Personality B: {config['personality_b']}")
         print(f"  Training mode: {TRAINING_CONFIG['train_mode']}")
-        print(f"  Episodes: {TRAINING_CONFIG['num_episodes']}")
+        print(f"  Episodes: {episodes_to_train}")
         print(f"  State dimension: {state_dim}")
         print(f"  Seed: {run_seed}")
 
-        trainer.train(TRAINING_CONFIG["num_episodes"], initial_seed=run_seed)
+        trainer.train(episodes_to_train, initial_seed=run_seed)
 
         # Save per-run statistics for later aggregation
         import json
@@ -229,8 +236,16 @@ def train_experiment(exp_id: str, save_dir: str):
         # Convert numpy arrays to lists where necessary
         stats_serializable = {}
         for k, v in stats.items():
-            if isinstance(v, list):
-                stats_serializable[k] = [float(x) if not isinstance(x, list) else x for x in v]
+            if k == "detailed_episodes":
+                # Skip detailed_episodes in train_stats.json (already saved separately)
+                continue
+            elif isinstance(v, list):
+                # Only convert numeric values, skip dicts and other complex types
+                stats_serializable[k] = [
+                    float(x) if isinstance(x, (int, float, np.number)) and not isinstance(x, (dict, list))
+                    else (list(x) if isinstance(x, np.ndarray) else x)
+                    for x in v
+                ]
             else:
                 stats_serializable[k] = v
 
@@ -262,6 +277,12 @@ def main():
         action="store_true",
         help="Train all 5 experiments sequentially",
     )
+    parser.add_argument(
+        "--episodes",
+        type=int,
+        default=None,
+        help="Number of episodes to train (overrides default 8000). Use this to quickly test with fewer episodes.",
+    )
 
     args = parser.parse_args()
 
@@ -278,13 +299,13 @@ def main():
         for exp_id in experiments:
             save_dir = Path(args.save_dir) / exp_id / "checkpoints"
             save_dir.mkdir(parents=True, exist_ok=True)
-            train_experiment(exp_id, str(save_dir))
+            train_experiment(exp_id, str(save_dir), args.episodes)
             print("\n" + "=" * 80 + "\n")
     else:
         # Train single experiment
         save_dir = Path(args.save_dir) / args.experiment / "checkpoints"
         save_dir.mkdir(parents=True, exist_ok=True)
-        train_experiment(args.experiment, str(save_dir))
+        train_experiment(args.experiment, str(save_dir), args.episodes)
 
     print("\nAll training completed!")
 

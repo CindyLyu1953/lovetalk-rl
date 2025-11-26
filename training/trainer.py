@@ -32,6 +32,8 @@ class MultiAgentTrainer:
         log_interval: int = 100,
         save_interval: int = 1000,
         save_dir: str = "./checkpoints",
+        save_detailed_episodes: bool = True,
+        detailed_episode_interval: int = 100,
     ):
         """
         Initialize multi-agent trainer.
@@ -44,6 +46,8 @@ class MultiAgentTrainer:
             log_interval: Interval for logging statistics (default: 100)
             save_interval: Interval for saving checkpoints (default: 1000)
             save_dir: Directory to save checkpoints (default: './checkpoints')
+            save_detailed_episodes: Whether to save detailed episode data (default: True)
+            detailed_episode_interval: Interval for saving detailed episodes (default: 100)
         """
         self.env = env
         self.agent_a = agent_a
@@ -52,12 +56,17 @@ class MultiAgentTrainer:
         self.log_interval = log_interval
         self.save_interval = save_interval
         self.save_dir = save_dir
+        self.save_detailed_episodes = save_detailed_episodes
+        self.detailed_episode_interval = detailed_episode_interval
 
         # Training statistics
         self.stats = defaultdict(list)
         self.episode_rewards_a = []
         self.episode_rewards_b = []
         self.episode_lengths = []
+
+        # Detailed episode data for diagnosis
+        self.detailed_episodes = []
 
         # Episode tracking
         self.episode_count = 0
@@ -93,6 +102,23 @@ class MultiAgentTrainer:
                 "actions": [],
                 "rewards": [],
                 "log_probs": [],
+            }
+
+            # Detailed episode tracking for diagnosis
+            detailed_episode_data = {
+                "episode": episode,
+                "steps": [],
+                "initial_state": {},
+                "final_state": {},
+            }
+            # Store initial state
+            initial_info = info.copy()
+            detailed_episode_data["initial_state"] = {
+                "emotion": initial_info.get("emotion", 0.0),
+                "trust": initial_info.get("trust", 0.0),
+                "conflict": initial_info.get("conflict", 0.0),
+                "calmness_a": initial_info.get("calmness_a", 0.0),
+                "calmness_b": initial_info.get("calmness_b", 0.0),
             }
 
             done = False
@@ -155,6 +181,33 @@ class MultiAgentTrainer:
                 else:
                     episode_reward_b += reward
                     episode_data_b["rewards"].append(reward)
+
+                # Store detailed step information for diagnosis
+                if self.save_detailed_episodes:
+                    from environment.actions import ActionType
+                    action_name = ActionType(action).name if action < 10 else f"Action_{action}"
+                    
+                    step_data = {
+                        "step": episode_length,
+                        "agent": "A" if agent_id == 0 else "B",
+                        "action": int(action),
+                        "action_name": action_name,
+                        "reward": float(reward),
+                        "state_before": {
+                            "emotion": float(obs[0]) if len(obs) > 0 else 0.0,
+                            "trust": float(obs[1]) if len(obs) > 1 else 0.0,
+                            "conflict": float(obs[2]) if len(obs) > 2 else 0.0,
+                            "calmness": float(obs[3]) if len(obs) > 3 else 0.0,
+                        },
+                        "state_after": {
+                            "emotion": info.get("emotion", 0.0),
+                            "trust": info.get("trust", 0.0),
+                            "conflict": info.get("conflict", 0.0),
+                            "calmness_a": info.get("calmness_a", 0.0),
+                            "calmness_b": info.get("calmness_b", 0.0),
+                        },
+                    }
+                    detailed_episode_data["steps"].append(step_data)
 
                 # Update agent (off-policy methods: Q-learning, SARSA)
                 # Skip incremental updates for PPO (handled at episode end)
@@ -264,6 +317,29 @@ class MultiAgentTrainer:
             self.stats["final_trust"].append(final_trust)
             self.stats["final_conflict"].append(final_conflict)
 
+            # Store final state in detailed episode data
+            if self.save_detailed_episodes:
+                detailed_episode_data["final_state"] = {
+                    "emotion": final_emotion,
+                    "trust": final_trust,
+                    "conflict": final_conflict,
+                    "calmness_a": info.get("calmness_a", 0.0),
+                    "calmness_b": info.get("calmness_b", 0.0),
+                    "termination_reason": info.get("termination_reason", "NEUTRAL"),
+                }
+                detailed_episode_data["total_reward_a"] = float(episode_reward_a)
+                detailed_episode_data["total_reward_b"] = float(episode_reward_b)
+                detailed_episode_data["episode_length"] = episode_length
+                
+                # Save detailed episode data at specified intervals or for first/last episodes
+                if (
+                    (episode + 1) % self.detailed_episode_interval == 0
+                    or episode == 0
+                    or episode == num_episodes - 1
+                    or episode < 10  # Save first 10 episodes
+                ):
+                    self.detailed_episodes.append(detailed_episode_data.copy())
+
             self.episode_count += 1
 
             # Logging
@@ -273,6 +349,14 @@ class MultiAgentTrainer:
             # Save checkpoints
             if (episode + 1) % self.save_interval == 0:
                 self._save_checkpoints(episode + 1)
+                
+            # Save detailed episodes periodically
+            if self.save_detailed_episodes and (episode + 1) % self.detailed_episode_interval == 0:
+                self._save_detailed_episodes()
+        
+        # Save detailed episodes at the end of training
+        if self.save_detailed_episodes and len(self.detailed_episodes) > 0:
+            self._save_detailed_episodes()
 
     def _log_statistics(self, episode: int):
         """Log training statistics."""
@@ -310,6 +394,34 @@ class MultiAgentTrainer:
 
         print(f"Checkpoints saved at episode {episode}")
 
+    def _save_detailed_episodes(self):
+        """Save detailed episode data to JSON file."""
+        import json
+        import os
+        from pathlib import Path
+        
+        os.makedirs(self.save_dir, exist_ok=True)
+        detailed_file = Path(self.save_dir) / "detailed_episodes.json"
+        
+        # Convert to serializable format
+        serializable_episodes = []
+        for ep in self.detailed_episodes:
+            serializable_ep = {
+                "episode": ep["episode"],
+                "initial_state": ep["initial_state"],
+                "final_state": ep["final_state"],
+                "total_reward_a": ep.get("total_reward_a", 0.0),
+                "total_reward_b": ep.get("total_reward_b", 0.0),
+                "episode_length": ep.get("episode_length", 0),
+                "steps": ep["steps"],
+            }
+            serializable_episodes.append(serializable_ep)
+        
+        with open(detailed_file, "w", encoding="utf-8") as f:
+            json.dump(serializable_episodes, f, indent=2, ensure_ascii=False)
+        
+        print(f"Detailed episodes saved to {detailed_file} ({len(serializable_episodes)} episodes)")
+
     def get_statistics(self) -> Dict:
         """Get training statistics."""
         return {
@@ -317,4 +429,5 @@ class MultiAgentTrainer:
             "episode_rewards_b": self.episode_rewards_b,
             "episode_lengths": self.episode_lengths,
             "stats": dict(self.stats),
+            "detailed_episodes": self.detailed_episodes if self.save_detailed_episodes else [],
         }

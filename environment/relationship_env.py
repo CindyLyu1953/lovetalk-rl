@@ -320,22 +320,35 @@ class RelationshipEnv(gym.Env):
         delta_emotion = curr_state.emotion_level - prev_state.emotion_level
         delta_trust = curr_state.trust_level - prev_state.trust_level
 
+        # Increased weight for emotion to encourage improvement from negative values
+        emotion_weight = self.reward_weights["emotion"] * 1.5  # Increase emotion weight
         immediate_reward = (
-            self.reward_weights["emotion"] * delta_emotion
+            emotion_weight * delta_emotion
             + self.reward_weights["trust"] * delta_trust
         )
+        
+        # Bonus for crossing emotion threshold from negative to positive
+        emotion_crossing_bonus = 0.0
+        if prev_state.emotion_level < 0 and curr_state.emotion_level >= 0:
+            emotion_crossing_bonus = 0.2  # Bonus for crossing from negative to positive
 
         # Action quality bonus
         from .actions import POSITIVE_ACTIONS, NEGATIVE_ACTIONS
 
         action_bonus = 0.0
         if action in POSITIVE_ACTIONS:
-            action_bonus = self.reward_weights["action_bonus"]
+            # Increased bonus for positive actions, especially when emotion is negative
+            base_bonus = self.reward_weights["action_bonus"] * 2.0  # Double the bonus
+            if prev_state.emotion_level < 0:
+                # Extra bonus when emotion is negative to encourage improvement
+                action_bonus = base_bonus + self.reward_weights["action_bonus"]
+            else:
+                action_bonus = base_bonus
         elif action in NEGATIVE_ACTIONS:
             # Increased penalty for negative actions (3x instead of 1x)
             action_bonus = -self.reward_weights["action_bonus"] * 3.0
 
-        return immediate_reward + action_bonus
+        return immediate_reward + action_bonus + emotion_crossing_bonus
 
     def _compute_deep_rl_reward(
         self,
@@ -349,10 +362,11 @@ class RelationshipEnv(gym.Env):
         Compute Deep RL reward using 4-part design.
 
         Reward components:
-        1. Continuous state change: 1.0 * Δemotion + 1.0 * Δtrust - 0.5 * Δconflict
-        2. Action-level: cooperative +0.05, aggressive -0.05, withdraw depends on conflict
-        3. Termination: success +2.0, failure -2.0, stalemate -0.2
-        4. Clipping: clip to [-3.0, 3.0]
+        1. Continuous state change: 1.5 * Δemotion + 1.0 * Δtrust - 0.5 * Δconflict
+        2. Emotion crossing bonus: +0.3 when emotion crosses from negative to positive
+        3. Action-level: cooperative +0.15 (or +0.25 if emotion < 0), aggressive -0.15, withdraw depends on conflict
+        4. Termination: success +2.0, failure -2.0, stalemate -0.2
+        5. Clipping: clip to [-3.0, 3.0]
 
         Args:
             prev_state: State before action
@@ -366,14 +380,20 @@ class RelationshipEnv(gym.Env):
         """
         from .actions import ActionType
 
-        # 1. Continuous state change reward
+        # 1. Continuous state change reward (increased weight for emotion improvement)
         delta_emotion = curr_state.emotion_level - prev_state.emotion_level
         delta_trust = curr_state.trust_level - prev_state.trust_level
         delta_conflict = curr_state.conflict_intensity - prev_state.conflict_intensity
 
-        r_state = 1.0 * delta_emotion + 1.0 * delta_trust - 0.5 * delta_conflict
+        # Increased weight for emotion to encourage improvement from negative values
+        r_state = 1.5 * delta_emotion + 1.0 * delta_trust - 0.5 * delta_conflict
+        
+        # Bonus for crossing emotion threshold from negative to positive
+        emotion_crossing_bonus = 0.0
+        if prev_state.emotion_level < 0 and curr_state.emotion_level >= 0:
+            emotion_crossing_bonus = 0.3  # Bonus for crossing from negative to positive
 
-        # 2. Action-level reward
+        # 2. Action-level reward (increased to encourage cooperative actions)
         COOPERATIVE_ACTIONS = {
             ActionType.APOLOGIZE,
             ActionType.EMPATHIZE,
@@ -392,15 +412,21 @@ class RelationshipEnv(gym.Env):
 
         r_action = 0.0
         if action in COOPERATIVE_ACTIONS:
-            r_action = 0.05
+            # Increased reward for cooperative actions, especially when emotion is negative
+            base_reward = 0.15  # Increased from 0.05
+            if prev_state.emotion_level < 0:
+                # Extra bonus when emotion is negative to encourage improvement
+                r_action = base_reward + 0.1
+            else:
+                r_action = base_reward
         elif action in AGGRESSIVE_ACTIONS:
-            r_action = -0.05
+            r_action = -0.15  # Increased penalty from -0.05
         elif action in WITHDRAW_ACTIONS:
             # High conflict (>= 0.6) -> +0.02, otherwise -0.02
             if prev_state.conflict_intensity >= 0.6:
                 r_action = 0.02
             else:
-                r_action = -0.02
+                r_action = -0.05  # Increased penalty from -0.02
 
         # 3. Termination reward
         r_terminal = 0.0
@@ -413,7 +439,7 @@ class RelationshipEnv(gym.Env):
                 r_terminal = -0.2
 
         # 4. Total reward with clipping
-        total_reward = r_state + r_action + r_terminal
+        total_reward = r_state + r_action + r_terminal + emotion_crossing_bonus
         return np.clip(total_reward, -3.0, 3.0)
 
     def _compute_final_reward(self) -> float:

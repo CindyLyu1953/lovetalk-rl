@@ -22,7 +22,7 @@ from personality import PersonalityType
 from training import Evaluator
 
 
-# Experiment configurations (must match train_deep_optimized.py)
+# Experiment configurations (must match train_deep.py)
 EXPERIMENT_CONFIGS = {
     "D1": {
         "personality_a": "neutral",
@@ -31,16 +31,16 @@ EXPERIMENT_CONFIGS = {
         "irritability_b": 0.4,
     },
     "D2": {
-        "personality_a": "impulsive",
-        "personality_b": "sensitive",
-        "irritability_a": 0.7,
-        "irritability_b": 0.5,
+        "personality_a": "neurotic",
+        "personality_b": "agreeable",
+        "irritability_a": 0.5,
+        "irritability_b": 0.3,
     },
     "D3": {
-        "personality_a": "impulsive",
-        "personality_b": "impulsive",
-        "irritability_a": 0.7,
-        "irritability_b": 0.7,
+        "personality_a": "neurotic",
+        "personality_b": "neurotic",
+        "irritability_a": 0.5,
+        "irritability_b": 0.5,
     },
     "D4": {
         "personality_a": "neutral",
@@ -49,10 +49,10 @@ EXPERIMENT_CONFIGS = {
         "irritability_b": 0.3,
     },
     "D5": {
-        "personality_a": "sensitive",
-        "personality_b": "sensitive",
-        "irritability_a": 0.5,
-        "irritability_b": 0.5,
+        "personality_a": "agreeable",
+        "personality_b": "conscientious",
+        "irritability_a": 0.3,
+        "irritability_b": 0.3,
     },
 }
 
@@ -145,9 +145,12 @@ def evaluate_experiment(
     evaluator = Evaluator(env)
 
     # Evaluate multiple episodes and collect per-episode data
+    # Use alternate_first_move=True to eliminate first-mover advantage
     episode_results = []
-    for _ in range(num_episodes):
-        metrics = evaluator.evaluate_episode(agent_a, agent_b, render=False)
+    for episode_idx in range(num_episodes):
+        # Alternate first move: even episodes agent_a goes first, odd episodes agent_b goes first
+        swap_agents = episode_idx % 2 == 1
+        metrics = evaluator.evaluate_episode(agent_a, agent_b, render=False, swap_agents=swap_agents)
         episode_results.append(metrics)
 
     # Aggregate results
