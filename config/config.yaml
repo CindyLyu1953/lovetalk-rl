@@ -97,3 +97,15 @@ data:
   dailydialog_path: null  # Path to DailyDialog dataset
   empathetic_dialogues_path: null  # Path to EmpatheticDialogues dataset
   use_data_calibration: false  # Whether to calibrate transition model from data
+ 
+# Sampling & Reproducibility (Beta sampling parameters and repeat counts)
+sampling:
+  positive_action_alpha: 3.0  # Beta alpha for positive actions (bias toward upper part of interval)
+  positive_action_beta: 2.0   # Beta beta for positive actions
+  negative_action_alpha: 2.0  # Beta alpha for negative actions (bias toward lower part of interval)
+  negative_action_beta: 3.0   # Beta beta for negative actions
+  mixed_action_alpha: 2.5     # Beta alpha for intervals that cross zero
+  mixed_action_beta: 2.5      # Beta beta for intervals that cross zero
+  shallow_repeats: 10         # Number of repeats for Shallow RL experiments
+  deep_repeats: 15            # Number of repeats for Deep RL experiments
+  base_seed: 42               # Base random seed; runs use base_seed + run_index

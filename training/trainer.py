@@ -62,7 +62,7 @@ class MultiAgentTrainer:
         # Episode tracking
         self.episode_count = 0
 
-    def train(self, num_episodes: int):
+    def train(self, num_episodes: int, initial_seed: Optional[int] = None):
         """
         Train agents for specified number of episodes.
 
@@ -76,8 +76,9 @@ class MultiAgentTrainer:
             episode_reward_b = 0.0
             episode_length = 0
 
-            # Reset environment
-            obs, info = self.env.reset()
+            # Reset environment (allow passing an initial seed for reproducibility)
+            # Only the first episode should use the provided initial_seed; subsequent episodes pass None
+            obs, info = self.env.reset(seed=initial_seed if episode == 0 else None)
             current_agent = 0  # 0 for A, 1 for B
 
             # Episode data for on-policy agents (e.g., SARSA, PPO)

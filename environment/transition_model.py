@@ -9,6 +9,7 @@ Updated to include calmness effects based on the revised transition table.
 from typing import Dict, Tuple
 import numpy as np
 from .actions import ActionType
+from personality.personality_policy import PersonalityType
 
 
 class TransitionModel:
@@ -39,65 +40,89 @@ class TransitionModel:
         Initialize transition model with updated action effects including calmness.
         Values based on the revised transition table.
         """
-        # Action effects: (delta_emotion, delta_trust, delta_calmness)
-        # Updated according to the new transition table
+        # Legacy single-value effects (kept for reference)
+        self.base_action_effects: Dict[ActionType, Tuple[float, float, float]] = {
+            ActionType.APOLOGIZE: (0.25, 0.35, 0.18),
+            ActionType.EMPATHIZE: (0.45, 0.12, 0.30),
+            ActionType.EXPLAIN: (0.12, 0.45, 0.08),
+            ActionType.REASSURE: (0.40, 0.15, 0.25),
+            ActionType.SUGGEST_SOLUTION: (0.15, 0.40, 0.12),
+            ActionType.ASK_FOR_NEEDS: (0.28, 0.28, 0.20),
+            ActionType.CHANGE_TOPIC: (-0.10, -0.15, -0.08),
+            ActionType.DEFENSIVE: (-0.25, -0.20, -0.15),
+            ActionType.BLAME: (-0.33, -0.27, -0.21),
+            ActionType.WITHDRAW: (-0.27, -0.30, -0.18),
+        }
 
-        self.action_effects: Dict[ActionType, Tuple[float, float, float]] = {
-            # Positive actions (NVC-based)
-            ActionType.APOLOGIZE: (
-                0.25,
-                0.35,
-                0.18,
-            ),  # Taking responsibility → trust rises significantly; moderate emotion boost
-            ActionType.EMPATHIZE: (
-                0.45,
-                0.12,
-                0.30,
-            ),  # Most effective emotional repair, but doesn't necessarily increase trust
-            ActionType.EXPLAIN: (
-                0.12,
-                0.45,
-                0.08,
-            ),  # Clarifying facts → strongly increases trust, but helps little with emotion
-            ActionType.REASSURE: (
-                0.40,
-                0.15,
-                0.25,
-            ),  # Reassuring speech → emotional stability + slight trust increase
-            ActionType.SUGGEST_SOLUTION: (
-                0.15,
-                0.40,
-                0.12,
-            ),  # Problem-solving oriented → trust significantly increases, emotion slightly improves
-            ActionType.ASK_FOR_NEEDS: (
-                0.28,
-                0.28,
-                0.20,
-            ),  # Dual improvement, moderately balanced action, not extreme
-            # Neutral actions
-            ActionType.CHANGE_TOPIC: (
-                -0.10,
-                -0.15,
-                -0.08,
-            ),  # Other party might be unhappy, but not serious; slight emotion and trust decrease
-            # Negative actions (Gottman's Four Horsemen)
-            # Fixed: Reduced negative action impacts to prevent immediate termination
-            # Scaled down by ~0.6 to give agents more room to recover
-            ActionType.DEFENSIVE: (
-                -0.25,  # Was -0.40, reduced to prevent immediate termination
-                -0.20,  # Was -0.35, reduced
-                -0.15,  # Was -0.25, reduced
-            ),  # Defensive behavior → emotion triggered, trust decreases, calmness drops quickly
-            ActionType.BLAME: (
-                -0.33,  # Was -0.55, reduced to prevent immediate termination
-                -0.27,  # Was -0.45, reduced
-                -0.21,  # Was -0.35, reduced
-            ),  # Explicit accusation → most severe aggressive speech, all three items significantly decrease
-            ActionType.WITHDRAW: (
-                -0.27,  # Was -0.45, reduced to prevent immediate termination
-                -0.30,  # Was -0.50, reduced
-                -0.18,  # Was -0.30, reduced
-            ),  # Cold war/Silence → strongly reduces trust, also makes atmosphere worse
+        # Personality-specific action effect RANGES (min, max) for (emotion, trust, calmness)
+        # Values adopted from experimental tables (Neuroticism, Agreeableness, Conscientiousness, Avoidant, Baseline)
+        # Format: {PersonalityType: {ActionType: ((e_min,e_max),(t_min,t_max),(c_min,c_max)), ...}, ...}
+        self.personality_action_ranges: Dict[PersonalityType, Dict[ActionType, Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]]]] = {
+            # Baseline / neutral
+            PersonalityType.NEUTRAL: {
+                ActionType.APOLOGIZE: ((0.19, 0.27), (0.30, 0.38), (0.13, 0.21)),
+                ActionType.EMPATHIZE: ((0.28, 0.34), (0.07, 0.12), (0.25, 0.34)),
+                ActionType.EXPLAIN: ((0.25, 0.34), (0.13, 0.18), (0.21, 0.30)),
+                ActionType.REASSURE: ((0.18, 0.25), (0.25, 0.33), (0.13, 0.20)),
+                ActionType.SUGGEST_SOLUTION: ((0.09, 0.15), (0.33, 0.45), (0.08, 0.14)),
+                ActionType.ASK_FOR_NEEDS: ((0.13, 0.21), (0.27, 0.38), (0.14, 0.23)),
+                ActionType.CHANGE_TOPIC: ((-0.10, -0.14), (-0.11, -0.17), (-0.07, -0.12)),
+                ActionType.DEFENSIVE: ((-0.41, -0.49), (-0.31, -0.39), (-0.25, -0.33)),
+                ActionType.BLAME: ((-0.51, -0.60), (-0.40, -0.50), (-0.28, -0.38)),
+                ActionType.WITHDRAW: ((-0.38, -0.48), (-0.44, -0.56), (-0.19, -0.30)),
+            },
+            # Neuroticism
+            PersonalityType.NEUROTIC: {
+                ActionType.APOLOGIZE: ((0.17, 0.24), (0.26, 0.35), (0.08, 0.15)),
+                ActionType.EMPATHIZE: ((0.29, 0.38), (0.06, 0.13), (0.18, 0.26)),
+                ActionType.EXPLAIN: ((0.14, 0.21), (0.21, 0.28), (0.06, 0.12)),
+                ActionType.REASSURE: ((0.26, 0.37), (0.09, 0.15), (0.14, 0.21)),
+                ActionType.SUGGEST_SOLUTION: ((0.06, 0.12), (0.28, 0.39), (0.04, 0.10)),
+                ActionType.ASK_FOR_NEEDS: ((0.11, 0.19), (0.23, 0.35), (0.09, 0.16)),
+                ActionType.CHANGE_TOPIC: ((-0.13, -0.18), (-0.15, -0.22), (-0.09, -0.14)),
+                ActionType.DEFENSIVE: ((-0.45, -0.57), (-0.36, -0.48), (-0.28, -0.39)),
+                ActionType.BLAME: ((-0.53, -0.66), (-0.41, -0.55), (-0.31, -0.45)),
+                ActionType.WITHDRAW: ((-0.41, -0.52), (-0.47, -0.62), (-0.21, -0.32)),
+            },
+            # Agreeableness
+            PersonalityType.AGREEABLE: {
+                ActionType.APOLOGIZE: ((0.21, 0.30), (0.34, 0.45), (0.18, 0.26)),
+                ActionType.EMPATHIZE: ((0.32, 0.43), (0.10, 0.18), (0.27, 0.38)),
+                ActionType.EXPLAIN: ((0.20, 0.29), (0.29, 0.39), (0.16, 0.24)),
+                ActionType.REASSURE: ((0.29, 0.40), (0.15, 0.22), (0.24, 0.33)),
+                ActionType.SUGGEST_SOLUTION: ((0.11, 0.18), (0.37, 0.49), (0.13, 0.20)),
+                ActionType.ASK_FOR_NEEDS: ((0.15, 0.23), (0.32, 0.45), (0.18, 0.26)),
+                ActionType.CHANGE_TOPIC: ((-0.08, -0.12), (-0.09, -0.14), (-0.05, -0.10)),
+                ActionType.DEFENSIVE: ((-0.36, -0.47), (-0.30, -0.43), (-0.21, -0.31)),
+                ActionType.BLAME: ((-0.41, -0.55), (-0.36, -0.50), (-0.24, -0.37)),
+                ActionType.WITHDRAW: ((-0.29, -0.40), (-0.42, -0.57), (-0.17, -0.26)),
+            },
+            # Conscientiousness
+            PersonalityType.CONSCIENTIOUS: {
+                ActionType.APOLOGIZE: ((0.18, 0.26), (0.33, 0.42), (0.15, 0.22)),
+                ActionType.EMPATHIZE: ((0.22, 0.30), (0.05, 0.10), (0.12, 0.20)),
+                ActionType.EXPLAIN: ((0.20, 0.30), (0.31, 0.43), (0.18, 0.26)),
+                ActionType.REASSURE: ((0.24, 0.33), (0.08, 0.14), (0.16, 0.23)),
+                ActionType.SUGGEST_SOLUTION: ((0.12, 0.19), (0.38, 0.51), (0.14, 0.22)),
+                ActionType.ASK_FOR_NEEDS: ((0.14, 0.22), (0.30, 0.41), (0.16, 0.24)),
+                ActionType.CHANGE_TOPIC: ((-0.09, -0.13), (-0.13, -0.20), (-0.07, -0.11)),
+                ActionType.DEFENSIVE: ((-0.44, -0.56), (-0.38, -0.51), (-0.27, -0.38)),
+                ActionType.BLAME: ((-0.47, -0.60), (-0.42, -0.55), (-0.28, -0.41)),
+                ActionType.WITHDRAW: ((-0.34, -0.46), (-0.48, -0.61), (-0.17, -0.28)),
+            },
+            # Avoidant
+            PersonalityType.AVOIDANT: {
+                ActionType.APOLOGIZE: ((0.12, 0.19), (0.19, 0.29), (0.07, 0.13)),
+                ActionType.EMPATHIZE: ((0.09, 0.16), (0.03, 0.09), (0.08, 0.14)),
+                ActionType.EXPLAIN: ((0.11, 0.18), (0.19, 0.28), (0.10, 0.16)),
+                ActionType.REASSURE: ((0.08, 0.15), (0.05, 0.12), (0.09, 0.14)),
+                ActionType.SUGGEST_SOLUTION: ((0.11, 0.17), (0.23, 0.34), (0.10, 0.17)),
+                ActionType.ASK_FOR_NEEDS: ((0.05, 0.12), (0.04, 0.11), (0.03, 0.09)),
+                ActionType.CHANGE_TOPIC: ((-0.05, -0.08), (-0.06, -0.10), (-0.03, -0.07)),
+                ActionType.DEFENSIVE: ((-0.39, -0.51), (-0.36, -0.48), (-0.22, -0.32)),
+                ActionType.BLAME: ((-0.46, -0.58), (-0.39, -0.54), (-0.25, -0.37)),
+                ActionType.WITHDRAW: ((-0.47, -0.62), (-0.53, -0.71), (-0.18, -0.27)),
+            },
         }
 
         # Calmness effects on action feasibility are handled in ActionFeasibility module
@@ -116,26 +141,74 @@ class TransitionModel:
         Returns:
             Tuple of (delta_emotion, delta_trust, delta_calmness)
         """
-        base_effect = self.action_effects[action]
-        delta_emotion, delta_trust, delta_calmness = base_effect
-
-        # Irritability affects calmness changes:
-        # - Negative actions → calmness drops more for high irritability
-        # - Positive actions → calmness rises less for high irritability
-        if delta_calmness < 0:
-            # Negative action: apply irritability multiplier (more drop)
-            delta_calmness *= 1 + irritability
-        else:
-            # Positive action: apply irritability multiplier (less rise)
-            delta_calmness *= 1 - irritability
-
-        # Add small random noise to model uncertainty (optional)
+        # Legacy fallback (if called without personality/rng) - sample around base effects
+        delta_emotion, delta_trust, delta_calmness = self.base_action_effects.get(action, (0.0, 0.0, 0.0))
+        # Apply small gaussian noise for legacy behavior
         noise_scale = 0.02
         delta_emotion += np.random.normal(0, noise_scale)
         delta_trust += np.random.normal(0, noise_scale)
         delta_calmness += np.random.normal(0, noise_scale * 0.5)
-
         return delta_emotion, delta_trust, delta_calmness
+
+    def _sample_from_interval(self, low: float, high: float, rng: np.random.Generator) -> float:
+        """
+        Sample a value from [low, high] using a Beta distribution shaped according to polarity.
+
+        - Positive intervals (low >= 0): alpha=3, beta=2 (biased to upper range)
+        - Negative intervals (high <= 0): alpha=2, beta=3 (biased to lower range)
+        - Mixed intervals (cross zero): alpha=2.5, beta=2.5 (near-uniform)
+        """
+        if high <= low:
+            return low
+
+        # Determine polarity based on interval
+        if low >= 0:
+            a, b = 3.0, 2.0
+        elif high <= 0:
+            a, b = 2.0, 3.0
+        else:
+            a, b = 2.5, 2.5
+
+        u = rng.beta(a, b)
+        return low + u * (high - low)
+
+    def compute_transition_with_personality(
+        self,
+        action: ActionType,
+        personality: PersonalityType,
+        rng: np.random.Generator,
+        irritability: float = 0.4,
+    ) -> Tuple[float, float, float]:
+        """
+        Compute state transition given an action and an agent's personality using
+        personality-specific ranges and Beta sampling.
+        """
+        # Use personality ranges if available, otherwise fallback to neutral ranges
+        ranges_for_person = self.personality_action_ranges.get(personality, self.personality_action_ranges.get(PersonalityType.NEUTRAL))
+        if ranges_for_person is None or action not in ranges_for_person:
+            # Fallback to base_effects with small noise
+            return self.compute_transition(action, irritability)
+
+        (e_low, e_high), (t_low, t_high), (c_low, c_high) = ranges_for_person[action]
+
+        # Sample each component using RNG and Beta-shaped distribution
+        delta_emotion = self._sample_from_interval(e_low, e_high, rng)
+        delta_trust = self._sample_from_interval(t_low, t_high, rng)
+        delta_calmness = self._sample_from_interval(c_low, c_high, rng)
+
+        # Adjust calmness change by irritability: negative changes amplified, positive reduced
+        if delta_calmness < 0:
+            delta_calmness *= 1 + irritability
+        else:
+            delta_calmness *= 1 - irritability
+
+        # Add small gaussian noise to model remaining uncertainty
+        noise_scale = 0.02
+        delta_emotion += rng.normal(0, noise_scale)
+        delta_trust += rng.normal(0, noise_scale)
+        delta_calmness += rng.normal(0, noise_scale * 0.5)
+
+        return float(delta_emotion), float(delta_trust), float(delta_calmness)
 
     def update_state(
         self,
@@ -143,6 +216,8 @@ class TransitionModel:
         action: ActionType,
         agent_id: int,
         recovery_rate: float = 0.02,
+        personality: PersonalityType = PersonalityType.NEUTRAL,
+        rng: np.random.Generator = None,
     ) -> "RelationshipState":
         """
         Update relationship state based on action.
@@ -158,11 +233,29 @@ class TransitionModel:
         """
         # Get agent's irritability trait
         irritability = current_state.get_irritability(agent_id)
+        # Ensure RNG
+        if rng is None:
+            rng = np.random.default_rng()
 
-        # Compute transitions
-        delta_emotion, delta_trust, delta_calmness = self.compute_transition(
-            action, irritability
-        )
+        # Compute transitions using personality-aware sampling
+        try:
+            # Accept either PersonalityType or string
+            if isinstance(personality, str):
+                try:
+                    personality_enum = PersonalityType(personality)
+                except Exception:
+                    personality_enum = PersonalityType.NEUTRAL
+            else:
+                personality_enum = personality
+
+            delta_emotion, delta_trust, delta_calmness = self.compute_transition_with_personality(
+                action, personality_enum, rng, irritability
+            )
+        except Exception:
+            # Fallback to legacy deterministic transition if anything fails
+            delta_emotion, delta_trust, delta_calmness = self.compute_transition(
+                action, irritability
+            )
 
         # Create new state with updated values
         new_state = current_state.copy()

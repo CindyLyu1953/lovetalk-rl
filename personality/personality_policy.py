@@ -16,10 +16,14 @@ import numpy as np
 class PersonalityType(Enum):
     """Personality types that affect agent behavior and state perception."""
 
-    IMPULSIVE = "impulsive"  # Tendency to blame/defensive actions
-    SENSITIVE = "sensitive"  # More reactive, trust more volatile
+    # Core project personalities (extended to support experimental table)
+    NEUROTIC = "neurotic"
+    AGREEABLE = "agreeable"
+    CONSCIENTIOUS = "conscientious"
     AVOIDANT = "avoidant"  # Tendency to withdraw/change topic
-    NEUTRAL = "neutral"  # Balanced behavior
+    SENSITIVE = "sensitive"  # More reactive, trust more volatile
+    IMPULSIVE = "impulsive"  # Tendency to blame/defensive actions
+    NEUTRAL = "neutral"  # Baseline / legacy neutral personality
 
 
 class PersonalityPolicy:

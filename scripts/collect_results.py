@@ -11,6 +11,7 @@ import numpy as np
 from pathlib import Path
 from collections import defaultdict
 import re
+from scipy import stats
 
 
 def parse_training_log(log_file):
@@ -144,7 +145,6 @@ def collect_all_results(experiment_dir="./experiments"):
 
     for exp_id, description in experiments.items():
         exp_path = exp_dir / exp_id
-
         # Get metadata
         metadata_file = exp_path / "metadata.json"
         metadata = {}
@@ -153,17 +153,79 @@ def collect_all_results(experiment_dir="./experiments"):
                 metadata = json.load(f)
 
         # Get training statistics
-        training_log = exp_path / f"training_log_{exp_id}.txt"
-        training_stats = parse_training_log(training_log)
+        # Prefer per-run JSON stats saved by new training scripts
+        run_dirs = sorted([p for p in exp_path.iterdir() if p.is_dir() and p.name.startswith("run_")])
+        per_run_stats = []
+        for run_dir in run_dirs:
+            tfile = run_dir / "train_stats.json"
+            if tfile.exists():
+                try:
+                    with open(tfile, "r") as f:
+                        per_run_stats.append(json.load(f)["stats"])
+                except Exception:
+                    continue
+
+        # If per-run stats not found, fallback to legacy training log parser
+        if per_run_stats:
+            training_stats = None
+        else:
+            training_log = exp_path / f"training_log_{exp_id}.txt"
+            training_stats = parse_training_log(training_log)
 
         # Get evaluation metrics
         eval_log = exp_path / f"evaluation_{exp_id}.txt"
         eval_metrics = parse_evaluation_log(eval_log)
 
+        # Aggregate per-run stats (mean ± 95% CI) when available
+        aggregated = {}
+        if per_run_stats:
+            # Collect arrays for metrics
+            final_emotions = []
+            final_trusts = []
+            avg_rewards = []
+            avg_lengths = []
+            for s in per_run_stats:
+                # s format depends on trainer.get_statistics; try multiple keys
+                # Final emotion/trust may be under s["stats"]["final_emotion"] (list)
+                try:
+                    final_emotions.append(float(s.get("stats", {}).get("final_emotion", [])[-1]))
+                except Exception:
+                    final_emotions.append(float(np.nan))
+                try:
+                    final_trusts.append(float(s.get("stats", {}).get("final_trust", [])[-1]))
+                except Exception:
+                    final_trusts.append(float(np.nan))
+                # avg reward: mean of episode_rewards_a
+                try:
+                    er = s.get("episode_rewards_a", [])
+                    avg_rewards.append(float(np.mean(er)) if er else float(np.nan))
+                except Exception:
+                    avg_rewards.append(float(np.nan))
+                try:
+                    lengths = s.get("episode_lengths", [])
+                    avg_lengths.append(float(np.mean(lengths)) if lengths else float(np.nan))
+                except Exception:
+                    avg_lengths.append(float(np.nan))
+
+            def mean_ci95(x):
+                arr = np.array([v for v in x if not np.isnan(v)])
+                if len(arr) == 0:
+                    return {"mean": None, "ci95": None, "n": 0}
+                mean = float(np.mean(arr))
+                ci95 = float(1.96 * np.std(arr, ddof=0) / np.sqrt(len(arr)))
+                return {"mean": mean, "ci95": ci95, "n": len(arr)}
+
+            aggregated["final_emotion"] = mean_ci95(final_emotions)
+            aggregated["final_trust"] = mean_ci95(final_trusts)
+            aggregated["avg_reward_a"] = mean_ci95(avg_rewards)
+            aggregated["avg_episode_length"] = mean_ci95(avg_lengths)
+
         results[exp_id] = {
             "description": description,
             "metadata": metadata,
             "training": training_stats,
+            "per_run_stats": per_run_stats,
+            "aggregated": aggregated if aggregated else None,
             "evaluation": eval_metrics,
         }
 
@@ -273,6 +335,73 @@ def main():
         json.dump(json_results, f, indent=2)
 
     print(f"\nFull results saved to: {json_file}")
+
+    # Run basic statistical tests across experiments when per-run stats are available
+    try:
+        run_statistical_tests(Path(args.experiment_dir))
+    except Exception as e:
+        print(f"Statistical tests skipped due to error: {e}")
+
+
+def run_statistical_tests(experiment_dir: Path):
+    """
+    Run basic statistical comparisons across experiments that have per-run stats.
+    - Performs one-way ANOVA on average rewards across experiments (if >=3)
+    - Performs pairwise t-tests (independent) for average rewards
+    Outputs results to STDOUT and saves a JSON summary.
+    """
+    exp_dir = Path(experiment_dir)
+    experiments = sorted([p for p in exp_dir.iterdir() if p.is_dir()])
+    group_rewards = {}
+    for exp_path in experiments:
+        # collect per-run train_stats.json files
+        run_dirs = sorted([p for p in exp_path.iterdir() if p.is_dir() and p.name.startswith("run_")])
+        rewards = []
+        for run in run_dirs:
+            tfile = run / "train_stats.json"
+            if not tfile.exists():
+                continue
+            try:
+                with open(tfile, "r") as f:
+                    s = json.load(f)["stats"]
+                    er = s.get("episode_rewards_a", [])
+                    if er:
+                        rewards.append(float(np.mean(er)))
+            except Exception:
+                continue
+        if rewards:
+            group_rewards[exp_path.name] = rewards
+
+    if not group_rewards:
+        print("No per-run stats found for statistical testing.")
+        return
+
+    # One-way ANOVA if >=3 groups
+    summary = {}
+    groups = list(group_rewards.keys())
+    if len(groups) >= 3:
+        arrays = [group_rewards[g] for g in groups]
+        fval, pval = stats.f_oneway(*arrays)
+        summary["anova"] = {"f": float(fval), "p": float(pval), "groups": groups}
+        print(f"\nANOVA across groups (avg reward): F={fval:.4f}, p={pval:.4e}")
+
+    # Pairwise t-tests
+    pairwise = {}
+    for i in range(len(groups)):
+        for j in range(i + 1, len(groups)):
+            a = group_rewards[groups[i]]
+            b = group_rewards[groups[j]]
+            t, p = stats.ttest_ind(a, b, equal_var=False, nan_policy="omit")
+            pairwise[f"{groups[i]}_vs_{groups[j]}"] = {"t": float(t), "p": float(p)}
+            print(f"t-test {groups[i]} vs {groups[j]}: t={t:.4f}, p={p:.4e}")
+
+    summary["pairwise_ttests"] = pairwise
+
+    # Save summary
+    out_file = exp_dir / "statistical_tests_summary.json"
+    with open(out_file, "w") as f:
+        json.dump(summary, f, indent=2)
+    print(f"\nStatistical test summary saved to: {out_file}")
 
 
 if __name__ == "__main__":

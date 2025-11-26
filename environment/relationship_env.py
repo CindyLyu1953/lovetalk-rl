@@ -14,6 +14,7 @@ from .state import RelationshipState
 from .actions import ActionType, NUM_ACTIONS
 from .transition_model import TransitionModel
 from .action_feasibility import ActionFeasibility
+from personality.personality_policy import PersonalityType
 
 
 class RelationshipEnv(gym.Env):
@@ -74,6 +75,11 @@ class RelationshipEnv(gym.Env):
         self.use_history = use_history
         self.recovery_rate = recovery_rate
 
+        # Personalities for agent A and B (can be set to PersonalityType values or strings)
+        # Keep default as NEUTRAL for backward compatibility
+        self.personality_a = PersonalityType.NEUTRAL
+        self.personality_b = PersonalityType.NEUTRAL
+
         # Initialize transition model and action feasibility
         self.transition_model = TransitionModel()
         self.action_feasibility = ActionFeasibility(
@@ -117,6 +123,8 @@ class RelationshipEnv(gym.Env):
         self.state: Optional[RelationshipState] = None
         self.initial_state: Optional[RelationshipState] = None
         self.termination_reason: Optional[str] = None  # SUCCESS, FAILURE, NEUTRAL
+        # Random generator for sampling transitions (set in reset with seed)
+        self._rng = np.random.default_rng()
 
         # Initial state parameters
         self.initial_emotion = initial_emotion
@@ -160,6 +168,13 @@ class RelationshipEnv(gym.Env):
             Observation and info dictionary
         """
         super().reset(seed=seed)
+
+        # Initialize RNG for reproducible sampling if seed provided
+        # Use numpy.default_rng for modern reproducible RNGs
+        if seed is not None:
+            self._rng = np.random.default_rng(seed)
+        else:
+            self._rng = np.random.default_rng()
 
         # Reset episode tracking
         self.current_step = 0
@@ -213,9 +228,17 @@ class RelationshipEnv(gym.Env):
         # Store previous state for reward calculation
         prev_state = self.state.copy()
 
-        # Update state based on action
+        # Update state based on action, passing personality and RNG for sampling
+        agent_personality = (
+            self.personality_a if self.current_agent == 0 else self.personality_b
+        )
         self.state = self.transition_model.update_state(
-            self.state, action_type, self.current_agent, self.recovery_rate
+            self.state,
+            action_type,
+            self.current_agent,
+            self.recovery_rate,
+            personality=agent_personality,
+            rng=self._rng,
         )
 
         # Update step and agent turn

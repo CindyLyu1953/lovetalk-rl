@@ -121,49 +121,58 @@ def train_experiment(exp_id: str, save_dir: str):
     print(f"Training Experiment {exp_id}: {config['description']}")
     print(f"{'='*80}\n")
 
-    # Create environment with Deep RL reward and optimized termination
-    env = RelationshipEnv(
-        max_episode_steps=20,
-        use_history=True,  # Deep RL uses history
-        history_length=10,
-        initial_emotion=-0.2,  # Slightly negative (conflict scenario)
-        initial_trust=0.6,  # Moderate trust
-        initial_calmness_a=0.6,  # More calm (prevents immediate termination)
-        initial_calmness_b=0.6,
-        irritability_a=config["irritability_a"],
-        irritability_b=config["irritability_b"],
-        recovery_rate=0.02,
-        use_deep_rl_reward=True,  # Enable Deep RL reward function
-        termination_thresholds=TERMINATION_THRESHOLDS,
-    )
+    # Training repeats and seeding (Deep RL: default 15 repeats)
+    repeats = 15
+    base_seed = 42
 
-    # Debug: Print initial state
-    test_obs, test_info = env.reset()
-    print(f"Initial Environment State:")
-    print(f"  Emotion: {test_info['emotion']:.3f}")
-    print(f"  Trust: {test_info['trust']:.3f}")
-    print(f"  Conflict: {test_info['conflict']:.3f}")
-    print(f"  Calmness A: {test_info['calmness_a']:.3f}")
-    print(f"  Calmness B: {test_info['calmness_b']:.3f}")
-    terminated, reason = env._check_termination()
-    print(f"  Initial Termination Check: {terminated}, Reason: {reason}")
-    print(
-        f"  Success threshold: emotion > {env.success_emotion_threshold}, trust > {env.success_trust_threshold}"
-    )
-    print(
-        f"  Failure threshold: emotion < {env.failure_emotion_threshold} OR trust < {env.failure_trust_threshold}"
-    )
-    print()
+    # Run multiple independent training repeats (each with its own seed and fresh agents)
+    for run_idx in range(repeats):
+        run_seed = base_seed + run_idx
+        run_save_dir = Path(save_dir) / f"run_{run_idx+1}"
+        run_save_dir.mkdir(parents=True, exist_ok=True)
 
-    # Get state dimension
-    obs, _ = env.reset()
-    state_dim = len(obs)
+        # Create environment with Deep RL reward and optimized termination
+        env = RelationshipEnv(
+            max_episode_steps=20,
+            use_history=True,  # Deep RL uses history
+            history_length=10,
+            initial_emotion=-0.2,  # Slightly negative (conflict scenario)
+            initial_trust=0.6,  # Moderate trust
+            initial_calmness_a=0.6,  # More calm (prevents immediate termination)
+            initial_calmness_b=0.6,
+            irritability_a=config["irritability_a"],
+            irritability_b=config["irritability_b"],
+            recovery_rate=0.02,
+            use_deep_rl_reward=True,  # Enable Deep RL reward function
+            termination_thresholds=TERMINATION_THRESHOLDS,
+        )
+
+
+        # Debug: Print initial state for this run
+        test_obs, test_info = env.reset(seed=run_seed)
+        print(f"[Run {run_idx+1}/{repeats}] Initial Environment State (seed={run_seed}):")
+        print(f"  Emotion: {test_info['emotion']:.3f}")
+        print(f"  Trust: {test_info['trust']:.3f}")
+        print(f"  Conflict: {test_info['conflict']:.3f}")
+        print(f"  Calmness A: {test_info['calmness_a']:.3f}")
+        print(f"  Calmness B: {test_info['calmness_b']:.3f}")
+        terminated, reason = env._check_termination()
+        print(f"  Initial Termination Check: {terminated}, Reason: {reason}")
+        print()
+
+        # Get state dimension
+        obs, _ = env.reset(seed=run_seed)
+        state_dim = len(obs)
 
     # Create agents with optimized DQN parameters
-    personality_a = PersonalityType[config["personality_a"].upper()]
-    personality_b = PersonalityType[config["personality_b"].upper()]
+        personality_a = PersonalityType[config["personality_a"].upper()]
+        personality_b = PersonalityType[config["personality_b"].upper()]
 
-    agent_a = DQNAgent(
+        # Set personalities on environment so transition model can sample personality-specific ranges
+        env.personality_a = personality_a
+        env.personality_b = personality_b
+
+        agent_a = DQNAgent(
         state_dim=state_dim,
         action_dim=10,
         personality=personality_a,
@@ -177,7 +186,7 @@ def train_experiment(exp_id: str, save_dir: str):
         target_update_freq=DQN_CONFIG["target_update_freq"],
     )
 
-    agent_b = DQNAgent(
+        agent_b = DQNAgent(
         state_dim=state_dim,
         action_dim=10,
         personality=personality_b,
@@ -191,33 +200,44 @@ def train_experiment(exp_id: str, save_dir: str):
         target_update_freq=DQN_CONFIG["target_update_freq"],
     )
 
-    # Create trainer
-    trainer = MultiAgentTrainer(
-        env=env,
-        agent_a=agent_a,
-        agent_b=agent_b,
-        train_mode=TRAINING_CONFIG["train_mode"],
-        log_interval=TRAINING_CONFIG["log_interval"],
-        save_interval=TRAINING_CONFIG["save_interval"],
-        save_dir=save_dir,
-    )
+        # Create trainer (per-run save_dir)
+        trainer = MultiAgentTrainer(
+            env=env,
+            agent_a=agent_a,
+            agent_b=agent_b,
+            train_mode=TRAINING_CONFIG["train_mode"],
+            log_interval=TRAINING_CONFIG["log_interval"],
+            save_interval=TRAINING_CONFIG["save_interval"],
+            save_dir=str(run_save_dir),
+        )
 
-    # Train
-    print(f"Training Configuration:")
-    print(f"  Algorithm: DQN (optimized for conflict resolution)")
-    print(f"  Personality A: {config['personality_a']}")
-    print(f"  Personality B: {config['personality_b']}")
-    print(f"  Training mode: {TRAINING_CONFIG['train_mode']}")
-    print(f"  Episodes: {TRAINING_CONFIG['num_episodes']}")
-    print(f"  State dimension: {state_dim}")
-    print(f"\nDQN Hyperparameters:")
-    for key, value in DQN_CONFIG.items():
-        print(f"  {key}: {value}")
-    print()
+        # Print run configuration
+        print(f"[Run {run_idx+1}/{repeats}] Training Configuration:")
+        print(f"  Algorithm: DQN (optimized for conflict resolution)")
+        print(f"  Personality A: {config['personality_a']}")
+        print(f"  Personality B: {config['personality_b']}")
+        print(f"  Training mode: {TRAINING_CONFIG['train_mode']}")
+        print(f"  Episodes: {TRAINING_CONFIG['num_episodes']}")
+        print(f"  State dimension: {state_dim}")
+        print(f"  Seed: {run_seed}")
 
-    trainer.train(TRAINING_CONFIG["num_episodes"])
+        trainer.train(TRAINING_CONFIG["num_episodes"], initial_seed=run_seed)
 
-    print(f"\n[OK] Training completed!")
+        # Save per-run statistics for later aggregation
+        import json
+        stats = trainer.get_statistics()
+        # Convert numpy arrays to lists where necessary
+        stats_serializable = {}
+        for k, v in stats.items():
+            if isinstance(v, list):
+                stats_serializable[k] = [float(x) if not isinstance(x, list) else x for x in v]
+            else:
+                stats_serializable[k] = v
+
+        with open(run_save_dir / "train_stats.json", "w") as f:
+            json.dump({"seed": run_seed, "stats": stats_serializable}, f, indent=2)
+
+        print(f"[Run {run_idx+1}] Training completed and stats saved to {run_save_dir}")
 
 
 def main():

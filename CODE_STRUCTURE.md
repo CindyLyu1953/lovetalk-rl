@@ -145,6 +145,7 @@ The environment is a **Gym-like** turn-based two-agent communication simulator.
 - **Purpose**: Updates state based on actions and personality traits
 - **Key Method**: `update_state(state, action_a, action_b, calmness_a, calmness_b, irritability_a, irritability_b)`
 - Models the psychological effects of actions on relationship state
+ - **Sampling**: Action effects are sampled per-run from personality-specific ranges using Beta distributions (configurable via `config/config.yaml`) and the environment supports seeded RNG for reproducibility.
 
 #### **`action_feasibility.py`** - Action Constraints
 - **Class**: `ActionFeasibility`
