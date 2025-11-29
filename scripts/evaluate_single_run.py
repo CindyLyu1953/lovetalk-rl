@@ -45,7 +45,7 @@ def evaluate_run(checkpoint_dir, exp_config, num_episodes=100):
         "failure_emotion": -0.5,  # Extreme conflict (emotion < -0.5)
         "failure_trust": 0.1,  # Very low trust (trust < 0.1)
     }
-    
+
     # Create environment (UPDATED to match latest training configuration!)
     env = RelationshipEnv(
         use_deep_rl_reward=True,
@@ -75,6 +75,8 @@ def evaluate_run(checkpoint_dir, exp_config, num_episodes=100):
         learning_rate=3e-4,
         discount_factor=0.99,
         epsilon=0.0,  # No exploration during evaluation
+        memory_size=100000,  # UPDATED: Match training configuration
+        tau=0.005,  # NEW: Soft update parameter (not used during evaluation)
         personality=personality_a,
     )
 
@@ -84,6 +86,8 @@ def evaluate_run(checkpoint_dir, exp_config, num_episodes=100):
         learning_rate=3e-4,
         discount_factor=0.99,
         epsilon=0.0,
+        memory_size=100000,  # UPDATED: Match training configuration
+        tau=0.005,  # NEW: Soft update parameter (not used during evaluation)
         personality=personality_b,
     )
 

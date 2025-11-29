@@ -1,12 +1,9 @@
 """
 Agents Package
 
-Contains implementations of various RL agents:
-- Shallow RL: Q-learning, SARSA
-- Deep RL: DQN, PPO
+Double DQN with soft target updates for multi-agent conflict resolution.
 """
 
-from .shallow_rl.q_learning import QLearningAgent
-from .shallow_rl.sarsa import SarsaAgent
+from .deep_rl import DQNAgent
 
-__all__ = ["QLearningAgent", "SarsaAgent"]
+__all__ = ["DQNAgent"]

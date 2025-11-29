@@ -64,10 +64,15 @@ class QNetwork(nn.Module):
 
 class DQNAgent:
     """
-    Deep Q-Network agent for relationship dynamics simulator.
+    Double DQN agent for relationship dynamics simulator.
 
-    Uses neural networks to approximate Q-values for continuous state space.
-    Implements experience replay and target network for stable learning.
+    Uses Double DQN with soft target updates (Polyak averaging) for stable learning.
+    Implements experience replay with large buffer for better sample efficiency.
+
+    Key Features:
+    - Double DQN: Uses online network for action selection, target network for evaluation
+    - Soft Target Update: Polyak averaging instead of hard updates
+    - Large Replay Buffer: 100,000 transitions for diverse experience
     """
 
     def __init__(
@@ -80,13 +85,15 @@ class DQNAgent:
         epsilon_decay: float = 0.995,
         epsilon_min: float = 0.01,
         batch_size: int = 64,
-        memory_size: int = 10000,
-        target_update_freq: int = 100,
+        memory_size: int = 100000,  # UPGRADED: Increased from 10000 to 100000
+        tau: float = 0.005,  # NEW: Soft update parameter for Polyak averaging
         personality: PersonalityType = PersonalityType.NEUTRAL,
         device: Optional[torch.device] = None,
+        # Deprecated parameter kept for backward compatibility
+        target_update_freq: int = None,
     ):
         """
-        Initialize DQN agent.
+        Initialize Double DQN agent with soft target updates.
 
         Args:
             state_dim: Dimension of state vector
@@ -97,10 +104,11 @@ class DQNAgent:
             epsilon_decay: Epsilon decay rate per update (default: 0.995)
             epsilon_min: Minimum epsilon value (default: 0.01)
             batch_size: Batch size for experience replay (default: 64)
-            memory_size: Size of replay buffer (default: 10000)
-            target_update_freq: Frequency of target network updates (default: 100)
+            memory_size: Size of replay buffer (default: 100000, upgraded from 10000)
+            tau: Soft update parameter for Polyak averaging (default: 0.005)
             personality: Personality type for this agent
             device: PyTorch device (default: cuda if available, else cpu)
+            target_update_freq: DEPRECATED - kept for backward compatibility, not used
         """
         self.state_dim = state_dim
         self.action_dim = action_dim
@@ -110,7 +118,7 @@ class DQNAgent:
         self.epsilon_decay = epsilon_decay
         self.epsilon_min = epsilon_min
         self.batch_size = batch_size
-        self.target_update_freq = target_update_freq
+        self.tau = tau  # NEW: Soft update parameter
 
         # Device
         self.device = (
@@ -197,9 +205,37 @@ class DQNAgent:
         """
         self.memory.append((state, action, reward, next_state, done))
 
+    def soft_update(self, online_net: nn.Module, target_net: nn.Module, tau: float):
+        """
+        Soft update of target network parameters using Polyak averaging.
+
+        θ_target = τ * θ_online + (1 - τ) * θ_target
+
+        This provides smoother target updates compared to hard updates,
+        leading to more stable training.
+
+        Args:
+            online_net: Online Q-network (being trained)
+            target_net: Target Q-network (for computing targets)
+            tau: Interpolation parameter (typically 0.001 - 0.01)
+        """
+        for param, target_param in zip(
+            online_net.parameters(), target_net.parameters()
+        ):
+            target_param.data.copy_(tau * param.data + (1.0 - tau) * target_param.data)
+
     def update(self) -> Optional[float]:
         """
-        Update Q-network using experience replay.
+        Update Q-network using Double DQN with soft target updates.
+
+        Double DQN:
+        1. Use online network to select best action: a* = argmax_a Q(s', a; θ_online)
+        2. Use target network to evaluate that action: Q(s', a*; θ_target)
+        3. This reduces overestimation bias compared to standard DQN
+
+        Soft Target Update:
+        - Apply Polyak averaging after each update instead of periodic hard updates
+        - More stable learning with smoother target changes
 
         Returns:
             Loss value if update was performed, None otherwise
@@ -218,34 +254,46 @@ class DQNAgent:
         next_states = torch.FloatTensor(np.array(next_states)).to(self.device)
         dones = torch.BoolTensor(dones).to(self.device)
 
-        # Current Q-values
+        # Current Q-values: Q(s, a; θ_online)
         current_q_values = self.q_network(states).gather(1, actions.unsqueeze(1))
 
-        # Next Q-values from target network
+        # DOUBLE DQN: Compute target Q-values
         with torch.no_grad():
-            next_q_values = self.target_network(next_states).max(1)[0]
+            # Step 1: Use online network to select best actions
+            # a* = argmax_a Q(s', a; θ_online)
+            next_actions = self.q_network(next_states).argmax(dim=1, keepdim=True)
+
+            # Step 2: Use target network to evaluate selected actions
+            # Q(s', a*; θ_target)
+            next_q_values = (
+                self.target_network(next_states).gather(1, next_actions).squeeze()
+            )
+
+            # Set Q-values to 0 for terminal states
             next_q_values[dones] = 0.0
+
+            # Compute target: r + γ * Q(s', a*; θ_target)
             target_q_values = rewards + self.discount_factor * next_q_values
 
-        # Compute loss
+        # Compute loss (Huber loss for robustness)
         loss = nn.MSELoss()(current_q_values.squeeze(), target_q_values)
 
-        # Optimize
+        # Optimize online network
         self.optimizer.zero_grad()
         loss.backward()
         # Gradient clipping for stability
         torch.nn.utils.clip_grad_norm_(self.q_network.parameters(), 1.0)
         self.optimizer.step()
 
-        # Update target network
-        self.update_counter += 1
-        if self.update_counter % self.target_update_freq == 0:
-            self.target_network.load_state_dict(self.q_network.state_dict())
+        # SOFT TARGET UPDATE: Apply Polyak averaging
+        # θ_target = τ * θ_online + (1 - τ) * θ_target
+        self.soft_update(self.q_network, self.target_network, self.tau)
 
         # Decay epsilon
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
         # Update statistics
+        self.update_counter += 1
         loss_value = loss.item()
         self.training_stats["losses"].append(loss_value)
 

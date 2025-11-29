@@ -1,214 +1,453 @@
-# Multi-Agent RL: Relationship Dynamics Simulator
+# LoveTalk-RL: Multi-Agent Conflict Resolution with Double DQN
 
-A reinforcement learning project that simulates relationship communication dynamics between two agents with different personality policies. The project explores how agents learn effective communication strategies through multi-agent reinforcement learning to reduce conflict, improve emotional stability, and increase trust.
+A multi-agent reinforcement learning system for relationship conflict resolution using Double DQN with soft target updates.
 
-## Project Overview
+---
 
-This project implements a turn-based two-agent communication environment where partners (agents) take turns expressing actions based on their learned policies. The environment models relationship state through three core metrics:
-- **Emotion Level**: Current emotional valence [-1, 1] (negative to positive)
-- **Trust Level**: Relationship trust level [0, 1]
-- **Conflict Intensity**: Intensity of current conflict [0, 1]
+## 📋 Table of Contents
 
-### Core Research Question
+1. [Overview](#overview)
+2. [Model Architecture](#model-architecture)
+3. [Algorithm](#algorithm)
+4. [Environment](#environment)
+5. [Installation](#installation)
+6. [Quick Start](#quick-start)
+7. [Project Structure](#project-structure)
+8. [References](#references)
 
-> Can two intelligent agents with different personality characteristics learn effective communication strategies through multi-agent reinforcement learning to reduce conflict, improve emotional stability, and increase trust in simulated relationship conflict scenarios?
+---
 
-## Features
+## Overview
 
-- **Rule-based Environment**: Turn-based two-agent communication environment grounded in psychological theories
-- **Multiple RL Algorithms**: 
-  - Shallow RL: Q-learning, SARSA (tabular methods)
-  - Deep RL: DQN (neural network-based methods)
-- **Multi-Agent Reward System**: 
-  - **Team Reward** for training (QMIX/VDN-inspired shared reward)
-  - **Individual Reward** for evaluation (COMA-inspired contribution analysis)
-- **Personality System**: Different personality types (impulsive, sensitive, avoidant, neutral) affecting agent behavior
-- **Psychology-Grounded Actions**: 10 discrete communication actions based on Gottman's Four Horsemen and Nonviolent Communication (NVC) models
-- **Data-Driven Calibration**: Optional calibration of transition model using real dialogue datasets (DailyDialog, EmpatheticDialogues)
+This project implements a multi-agent reinforcement learning system where two agents learn to resolve relationship conflicts through dialogue. The system uses **Double DQN with Soft Target Updates (Polyak averaging)** for stable and efficient learning.
+
+### Key Features
+
+- **Double DQN:** Reduces Q-value overestimation bias
+- **Soft Target Updates:** Polyak averaging for smooth learning
+- **Large Replay Buffer:** 100,000 transitions for better sample efficiency
+- **Repair Stage Inference:** Automatic stage detection (4 stages: Tension, Clarification, Problem-Solving, Closure)
+- **Stage-Based Reward Shaping:** Contextual guidance for appropriate actions
+- **Multi-Agent Coordination:** Team reward for cooperative learning
+- **Personality System:** 5 personality types affecting behavior
+
+---
+
+## Model Architecture
+
+### Double DQN Agent
+
+**Network Architecture:**
+```
+Input: State (15D) = [emotion, trust, conflict, calmness, stage] + [history (10)]
+  ↓
+Hidden Layer 1: 128 neurons + ReLU
+  ↓
+Hidden Layer 2: 128 neurons + ReLU
+  ↓
+Output: Q-values for 10 actions
+```
+
+**Hyperparameters:**
+```python
+learning_rate = 3e-4
+discount_factor = 0.99
+epsilon_start = 1.0
+epsilon_decay = 0.998
+epsilon_min = 0.1
+batch_size = 64
+memory_size = 100000  # Large replay buffer
+tau = 0.005  # Soft update parameter
+```
+
+---
+
+## Algorithm
+
+### Double DQN with Soft Target Updates
+
+**1. Double DQN Target Computation:**
+```python
+# Standard DQN (Overestimates):
+target = r + γ * max_a Q(s', a; θ_target)
+
+# Double DQN (Reduced Bias):
+a* = argmax_a Q(s', a; θ_online)  # Select with online network
+target = r + γ * Q(s', a*; θ_target)  # Evaluate with target network
+```
+
+**2. Soft Target Update (Polyak Averaging):**
+```python
+# After each optimization step:
+θ_target ← τ * θ_online + (1 - τ) * θ_target
+
+# With τ = 0.005:
+# - 0.5% from online network
+# - 99.5% from target network
+# - Smooth, continuous updates
+```
+
+**3. Team Reward for Multi-Agent Learning:**
+```python
+team_reward = state_change_reward + action_reward + stage_shaping + terminal_reward
+
+# State change: Δemotion, Δtrust, Δconflict
+# Action reward: +0.2 for cooperative, -0.2 for aggressive
+# Stage shaping: Contextual guidance (±1.0)
+# Terminal reward: +30 SUCCESS, -20 FAILURE, -10 NEUTRAL
+```
+
+---
+
+## Environment
+
+### State Space
+
+**Core State (5D):**
+- `emotion`: [-1, 1] - Emotional valence
+- `trust`: [0, 1] - Trust level
+- `conflict`: [0, 1] - Conflict intensity
+- `calmness`: [0, 1] - Agent's calmness
+- `stage`: [0, 1] - Repair stage (normalized)
+
+**Full State (15D):** Core + Action History (10 recent actions)
+
+### Action Space
+
+10 discrete actions:
+1. `APOLOGIZE` - Express apology
+2. `EMPATHIZE` - Show empathy
+3. `EXPLAIN` - Explain perspective
+4. `REASSURE` - Provide reassurance
+5. `SUGGEST_SOLUTION` - Propose solution
+6. `ASK_FOR_NEEDS` - Inquire about needs
+7. `CHANGE_TOPIC` - Change subject
+8. `DEFENSIVE` - Defensive response
+9. `BLAME` - Blame other
+10. `WITHDRAW` - Withdraw from conversation
+
+### Repair Stages
+
+1. **Stage 1 - Tension/Eruption** (`emotion < -0.3`)
+   - Optimal: EMPATHIZE, REASSURE
+   - Avoid: EXPLAIN, SUGGEST_SOLUTION
+
+2. **Stage 2 - Clarification** (`-0.3 ≤ emotion < 0`)
+   - Optimal: EXPLAIN
+   - Avoid: Withdrawal
+
+3. **Stage 3 - Problem-Solving** (`emotion ≥ 0, trust < 0.6`)
+   - Optimal: SUGGEST_SOLUTION
+   - Avoid: Overthinking
+
+4. **Stage 4 - Closure** (`emotion ≥ 0, trust ≥ 0.6`)
+   - Optimal: APOLOGIZE, ASK_FOR_NEEDS
+   - Maintain: REASSURE
+
+### Termination Conditions
+
+- **SUCCESS:** `emotion > 0.2 AND trust > 0.6`
+- **FAILURE:** `emotion < -0.5 OR trust < 0.1`
+- **NEUTRAL:** Max steps (50) reached without resolution
+
+---
+
+## Installation
+
+### Requirements
+
+```bash
+Python 3.8+
+PyTorch 1.9+
+NumPy
+Gymnasium
+PyYAML
+```
+
+### Setup
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd lovetalk-rl
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## Quick Start
+
+### Training
+
+**Train all 5 experiments (D1-D5):**
+```bash
+OMP_NUM_THREADS=1 python scripts/train_deep.py --all --save_dir ./experiments
+```
+
+**Train single experiment:**
+```bash
+OMP_NUM_THREADS=1 python scripts/train_deep.py \
+  --experiment D1 \
+  --save_dir ./experiments \
+  --episodes 8000
+```
+
+**Experiments:**
+- **D1:** neutral × neutral (baseline)
+- **D2:** neurotic × agreeable (conflict)
+- **D3:** neurotic × neurotic (extreme conflict)
+- **D4:** neutral × avoidant (cold war)
+- **D5:** agreeable × conscientious (cooperative)
+
+### Evaluation
+
+**Evaluate single experiment:**
+```bash
+OMP_NUM_THREADS=1 python scripts/evaluate_single_run.py \
+  --checkpoint_dir ./experiments/D1/checkpoints/run_15 \
+  --experiment D1 \
+  --num_episodes 100
+```
+
+**Evaluate all experiments:**
+```bash
+bash scripts/evaluate_all_experiments.sh
+```
+
+### Results
+
+Results are saved in:
+```
+experiments/
+├── D1/
+│   ├── checkpoints/
+│   │   └── run_15/
+│   │       ├── agent_a_ep8000.pth
+│   │       ├── agent_b_ep8000.pth
+│   │       ├── train_stats.json
+│   │       ├── detailed_episodes.json
+│   │       └── evaluation_results.json
+│   └── evaluation_deep_D1.json
+├── D2/...
+├── D3/...
+├── D4/...
+└── D5/...
+```
+
+---
 
 ## Project Structure
 
 ```
 lovetalk-rl/
-├── environment/          # Core environment implementation
-│   ├── __init__.py
-│   ├── actions.py        # Action space definitions
-│   ├── state.py          # State space definitions
-│   ├── transition_model.py  # State transition model
-│   └── relationship_env.py  # Main environment class
-├── agents/               # RL agent implementations
-│   ├── shallow_rl/       # Tabular RL methods
-│   │   ├── q_learning.py
-│   │   └── sarsa.py
-│   └── deep_rl/          # Deep RL methods
-│       ├── dqn.py
-│       └── ppo.py
-├── personality/          # Personality policy system
-│   ├── __init__.py
-│   └── personality_policy.py
-├── training/             # Training and evaluation utilities
-│   ├── __init__.py
-│   ├── trainer.py
-│   └── evaluator.py
-├── scripts/              # Training and evaluation scripts
-│   ├── train_shallow.py
-│   ├── train_deep.py
-│   └── evaluate.py
-├── data/                 # Data loading and calibration utilities
-│   ├── __init__.py
-│   ├── data_loader.py
-│   └── calibrator.py
-├── utils/                # Visualization utilities
-│   ├── __init__.py
-│   └── visualizer.py
-├── config/               # Configuration files
-│   ├── __init__.py
-│   └── config.yaml
-├── requirements.txt
-└── README.md
+├── README.md                      # This file
+├── requirements.txt               # Python dependencies
+│
+├── agents/                        # RL Agents
+│   └── deep_rl/
+│       └── dqn.py                 # Double DQN implementation
+│
+├── environment/                   # Environment
+│   ├── relationship_env.py        # Main environment class
+│   ├── state.py                   # State representation
+│   ├── actions.py                 # Action definitions
+│   ├── transition_model.py        # State transition logic
+│   └── action_feasibility.py      # Action selection constraints
+│
+├── personality/                   # Personality system
+│   └── personality_policy.py      # Personality types and effects
+│
+├── training/                      # Training utilities
+│   ├── trainer.py                 # Multi-agent trainer
+│   └── evaluator.py               # Evaluation utilities
+│
+├── scripts/                       # Training & evaluation scripts
+│   ├── train_deep.py              # Train Double DQN agents
+│   ├── evaluate_deep.py           # Evaluate trained agents
+│   ├── evaluate_single_run.py     # Evaluate single run
+│   └── evaluate_all_experiments.sh # Batch evaluation
+│
+├── config/                        # Configuration
+│   └── config.yaml                # Environment configuration
+│
+├── experiments/                   # Training results
+│   ├── D1/...                     # Experiment results
+│   ├── D2/...
+│   ├── D3/...
+│   ├── D4/...
+│   └── D5/...
+│
+└── utils/                         # Utilities
+    └── visualizer.py              # Visualization tools
 ```
 
-## Installation
+---
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd lovetalk-rl
+## Key Components
+
+### 1. Double DQN Agent (`agents/deep_rl/dqn.py`)
+
+Implements Double DQN with:
+- Online network for action selection
+- Target network for value evaluation
+- Soft target updates (Polyak averaging)
+- Large replay buffer (100,000 transitions)
+- Epsilon-greedy exploration
+
+### 2. Relationship Environment (`environment/relationship_env.py`)
+
+Features:
+- Turn-based multi-agent interaction
+- Dynamic state updates (emotion, trust, conflict, calmness)
+- Repair stage inference (4 stages)
+- Stage-based reward shaping
+- Team reward for cooperative learning
+- Personality-specific transitions
+
+### 3. Multi-Agent Trainer (`training/trainer.py`)
+
+Supports:
+- Self-play training
+- Alternating agent turns
+- Experience replay for both agents
+- Periodic checkpointing
+- Detailed episode logging
+
+### 4. Personality System (`personality/personality_policy.py`)
+
+Personality types:
+- **NEUTRAL:** Balanced behavior
+- **NEUROTIC:** High irritability, emotional
+- **AGREEABLE:** Cooperative, low irritability
+- **CONSCIENTIOUS:** Systematic, solution-focused
+- **AVOIDANT:** Withdrawal tendency
+
+Each personality affects:
+- Action effect ranges
+- Irritability (calmness decay)
+- Action preferences
+
+---
+
+## Training Details
+
+### Training Configuration
+
+```yaml
+num_episodes: 8000
+train_mode: self_play
+log_interval: 200
+save_interval: 2000
+repeats: 15  # 15 independent training runs per experiment
 ```
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
+### Initial Conditions
+
+```yaml
+initial_emotion: -0.3  # Slight negative emotion (conflict)
+initial_trust: 0.4     # Lower trust (challenging scenario)
+initial_calmness: 0.4  # Moderate calmness
+max_episode_steps: 50  # Maximum steps per episode
 ```
 
-## Usage
+### Expected Performance
 
-### Training Shallow RL Agents
+After training (8000 episodes):
+- **Success Rate:** 20-40%
+- **Average Episode Length:** 25-35 steps
+- **Epsilon (final):** ~0.16
+- **Training Time:** ~2-4 hours for all 5 experiments
 
-Train Q-learning or SARSA agents:
-```bash
-python scripts/train_shallow.py \
-    --algorithm q_learning \
-    --episodes 5000 \
-    --personality_a neutral \
-    --personality_b neutral \
-    --train_mode self_play \
-    --save_dir ./checkpoints/shallow
-```
+---
 
-### Training Deep RL Agents
+## References
 
-Train DQN or PPO agents:
-```bash
-python scripts/train_deep.py \
-    --algorithm dqn \
-    --episodes 5000 \
-    --personality_a neutral \
-    --personality_b sensitive \
-    --train_mode self_play \
-    --save_dir ./checkpoints/deep
-```
+### Reinforcement Learning
 
-### Evaluating Trained Agents
+1. **Double DQN:**
+   - van Hasselt, H., Guez, A., & Silver, D. (2016). "Deep Reinforcement Learning with Double Q-learning." *AAAI*.
+   - Reduces Q-value overestimation by decoupling action selection and evaluation
 
-Evaluate trained agents:
-```bash
-python scripts/evaluate.py \
-    --agent_type q_learning \
-    --checkpoint_a ./checkpoints/shallow/agent_a_ep5000.pth \
-    --checkpoint_b ./checkpoints/shallow/agent_b_ep5000.pth \
-    --num_episodes 100
-```
+2. **Soft Target Updates:**
+   - Lillicrap, T. P., et al. (2015). "Continuous control with deep reinforcement learning." *ICLR*.
+   - Polyak averaging for smooth target network updates
 
-## Action Space
+3. **Experience Replay:**
+   - Mnih, V., et al. (2015). "Human-level control through deep reinforcement learning." *Nature*.
+   - Breaks temporal correlations in training data
 
-The environment defines 10 discrete communication actions:
+4. **Prioritized Experience Replay:**
+   - Schaul, T., et al. (2015). "Prioritized Experience Replay." *ICLR*.
+   - Improves sample efficiency (not implemented, but related work)
 
-**Positive Actions (NVC-based)**:
-- `APOLOGIZE`: Taking responsibility and apologizing
-- `EMPATHIZE`: Expressing understanding and empathy
-- `EXPLAIN`: Calmly explaining facts without blame
-- `REASSURE`: Providing emotional comfort and reassurance
-- `SUGGEST_SOLUTION`: Proposing constructive solutions
-- `ASK_FOR_NEEDS`: Inquiring about partner's needs and feelings
+### Multi-Agent RL
 
-**Neutral Actions**:
-- `CHANGE_TOPIC`: Shifting conversation topic
+5. **Value Decomposition (QMIX/VDN):**
+   - Rashid, T., et al. (2018). "QMIX: Monotonic Value Function Factorisation for Decentralised Multi-Agent Reinforcement Learning." *ICML*.
+   - Sunehag, P., et al. (2018). "Value-Decomposition Networks For Cooperative Multi-Agent Learning." *AAMAS*.
+   - Inspiration for team reward design
 
-**Negative Actions (Gottman's Four Horsemen)**:
-- `DEFENSIVE`: Self-defense and justification
-- `BLAME`: Blaming the partner
-- `WITHDRAW`: Silent treatment or avoidance
+6. **Counterfactual Multi-Agent (COMA):**
+   - Foerster, J., et al. (2018). "Counterfactual Multi-Agent Policy Gradients." *AAAI*.
+   - Inspiration for individual reward analysis
 
-## Personality Types
+### Psychology & Relationship Research
 
-- **Neutral**: Balanced behavior, no bias
-- **Impulsive**: Tendency to use blame/defensive actions
-- **Sensitive**: More reactive to negative states, trust more volatile
-- **Avoidant**: Tendency to withdraw or change topic
+7. **Gottman's Four Horsemen:**
+   - Gottman, J. M., & Silver, N. (2015). "The Seven Principles for Making Marriage Work."
+   - Foundation for negative action effects (BLAME, DEFENSIVE, WITHDRAW)
 
-## Reward Function
+8. **Nonviolent Communication (NVC):**
+   - Rosenberg, M. B. (2015). "Nonviolent Communication: A Language of Life."
+   - Foundation for positive action effects (EMPATHIZE, ASK_FOR_NEEDS)
 
-The reward function combines:
-1. **Immediate rewards**: Based on state changes (emotion improvement, trust increase, conflict reduction)
-2. **Action quality bonus**: Positive actions get bonuses, negative actions get penalties
-3. **Final episode reward**: Weighted combination of final relationship state metrics
+9. **Emotion Regulation:**
+   - Gross, J. J. (1998). "The emerging field of emotion regulation: An integrative review." *Review of General Psychology*.
+   - Basis for calmness mechanic and emotional dynamics
 
-## Experiments
+10. **Conflict Resolution Stages:**
+    - Thomas, K. W., & Kilmann, R. H. (1974). "Thomas-Kilmann Conflict Mode Instrument."
+    - Inspiration for repair stage design
 
-The project is designed to explore:
-1. **Tabular RL vs Deep RL**: Performance differences in convergence, total reward, conflict resolution success
-2. **Personality effects**: How different personality types affect strategy learning
-3. **Multi-agent vs single-agent**: Comparison of training modes (self-play vs fixed-opponent)
-4. **Reward shaping**: Impact of different reward function designs
-
-## Theoretical Foundations
-
-The environment design is grounded in:
-1. **Gottman's Four Horsemen**: Model of relationship conflict (criticism, contempt, defensiveness, stonewalling)
-2. **Nonviolent Communication (NVC)**: Framework for empathetic communication
-3. **Emotion Regulation & Repair Research**: Models of relationship repair and trust building
-
-## Data Calibration (Optional)
-
-The transition model can be calibrated using real dialogue datasets:
-- **DailyDialog**: Provides emotion labels and dialog acts
-- **EmpatheticDialogues**: Focused on empathy and emotional understanding
-
-See `data/calibrator.py` for calibration utilities.
-
-## Configuration
-
-Configuration can be customized in `config/config.yaml`:
-- Environment parameters
-- RL algorithm hyperparameters
-- Training settings
-- Personality configurations
+---
 
 ## Citation
 
-If you use this code, please cite:
+If you use this code in your research, please cite:
 
 ```bibtex
-@misc{relationship-dynamics-simulator,
-  title={Multi-Agent RL: Relationship Dynamics Simulator},
+@misc{lovetalk-rl-2025,
+  title={LoveTalk-RL: Multi-Agent Conflict Resolution with Double DQN},
   author={Your Name},
-  year={2024},
-  howpublished={\url{<repository-url>}}
+  year={2025},
+  howpublished={\url{https://github.com/yourusername/lovetalk-rl}}
 }
 ```
 
+---
+
 ## License
 
-[Specify your license]
+MIT License
 
-## Contributing
-
-[Specify contribution guidelines]
+---
 
 ## Acknowledgments
 
-- DailyDialog dataset
-- EmpatheticDialogues dataset
-- Gottman Institute's relationship research
-- Nonviolent Communication framework
+- Double DQN implementation inspired by van Hasselt et al. (2016)
+- Multi-agent reward design inspired by QMIX (Rashid et al., 2018) and COMA (Foerster et al., 2018)
+- Relationship dynamics grounded in Gottman's research and NVC principles
+- Environment design influenced by emotion regulation theory (Gross, 1998)
+
+---
+
+## Contact
+
+For questions or issues, please open an issue on GitHub or contact the authors.
+
+---
+
+**Last Updated:** November 29, 2025  
+**Version:** 2.0 (Double DQN + Soft Target Updates)

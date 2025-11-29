@@ -26,16 +26,16 @@ from personality import PersonalityType
 from training import MultiAgentTrainer
 
 
-# Optimized DQN hyperparameters for conflict resolution
+# Optimized Double DQN hyperparameters for conflict resolution
 DQN_CONFIG = {
     "learning_rate": 3e-4,
     "discount_factor": 0.99,
     "epsilon": 1.0,
-    "epsilon_decay": 0.998,  # UPDATED: Slower decay for more exploration (was 0.997)
-    "epsilon_min": 0.1,  # UPDATED: Higher minimum for sustained exploration (was 0.05)
+    "epsilon_decay": 0.998,  # Slower decay for more exploration
+    "epsilon_min": 0.1,  # Higher minimum for sustained exploration
     "batch_size": 64,
-    "memory_size": 20000,
-    "target_update_freq": 200,
+    "memory_size": 100000,  # UPGRADED: Increased from 20000 to 100000 for better sample efficiency
+    "tau": 0.005,  # NEW: Soft update parameter for Polyak averaging
 }
 
 # Termination thresholds (UPDATED to match latest environment upgrade)
@@ -193,7 +193,7 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
             epsilon_min=DQN_CONFIG["epsilon_min"],
             batch_size=DQN_CONFIG["batch_size"],
             memory_size=DQN_CONFIG["memory_size"],
-            target_update_freq=DQN_CONFIG["target_update_freq"],
+            tau=DQN_CONFIG["tau"],  # NEW: Soft update parameter
         )
 
         agent_b = DQNAgent(
@@ -207,7 +207,7 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
             epsilon_min=DQN_CONFIG["epsilon_min"],
             batch_size=DQN_CONFIG["batch_size"],
             memory_size=DQN_CONFIG["memory_size"],
-            target_update_freq=DQN_CONFIG["target_update_freq"],
+            tau=DQN_CONFIG["tau"],  # NEW: Soft update parameter
         )
 
         # Create trainer (per-run save_dir)
