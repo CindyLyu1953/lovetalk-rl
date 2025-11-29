@@ -18,7 +18,10 @@ This project implements a turn-based two-agent communication environment where p
 - **Rule-based Environment**: Turn-based two-agent communication environment grounded in psychological theories
 - **Multiple RL Algorithms**: 
   - Shallow RL: Q-learning, SARSA (tabular methods)
-  - Deep RL: DQN, PPO (neural network-based methods)
+  - Deep RL: DQN (neural network-based methods)
+- **Multi-Agent Reward System**: 
+  - **Team Reward** for training (QMIX/VDN-inspired shared reward)
+  - **Individual Reward** for evaluation (COMA-inspired contribution analysis)
 - **Personality System**: Different personality types (impulsive, sensitive, avoidant, neutral) affecting agent behavior
 - **Psychology-Grounded Actions**: 10 discrete communication actions based on Gottman's Four Horsemen and Nonviolent Communication (NVC) models
 - **Data-Driven Calibration**: Optional calibration of transition model using real dialogue datasets (DailyDialog, EmpatheticDialogues)

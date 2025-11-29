@@ -31,17 +31,17 @@ DQN_CONFIG = {
     "learning_rate": 3e-4,
     "discount_factor": 0.99,
     "epsilon": 1.0,
-    "epsilon_decay": 0.997,
-    "epsilon_min": 0.05,
+    "epsilon_decay": 0.998,  # UPDATED: Slower decay for more exploration (was 0.997)
+    "epsilon_min": 0.1,  # UPDATED: Higher minimum for sustained exploration (was 0.05)
     "batch_size": 64,
     "memory_size": 20000,
     "target_update_freq": 200,
 }
 
-# Termination thresholds for moderate repair (updated to match environment)
+# Termination thresholds (UPDATED to match latest environment upgrade)
 TERMINATION_THRESHOLDS = {
-    "success_emotion": 0.4,  # Moderate repair (emotion > 0.4)
-    "success_trust": 0.6,  # Moderate trust recovery (trust > 0.6)
+    "success_emotion": 0.2,  # Balanced repair (emotion > 0.2)
+    "success_trust": 0.6,  # High trust recovery (trust > 0.6)
     "failure_emotion": -0.5,  # Extreme conflict (emotion < -0.5)
     "failure_trust": 0.1,  # Very low trust (trust < 0.1)
 }
@@ -140,15 +140,15 @@ def train_experiment(exp_id: str, save_dir: str, num_episodes: Optional[int] = N
         run_save_dir = Path(save_dir) / f"run_{run_idx+1}"
         run_save_dir.mkdir(parents=True, exist_ok=True)
 
-        # Create environment with Deep RL reward and optimized termination
+        # Create environment with Deep RL reward and LATEST UPGRADE configuration
         env = RelationshipEnv(
             max_episode_steps=50,
             use_history=True,  # Deep RL uses history
             history_length=10,
-            initial_emotion=-0.2,  # Slightly negative (conflict scenario)
-            initial_trust=0.6,  # Moderate trust
-            initial_calmness_a=0.6,  # More calm (prevents immediate termination)
-            initial_calmness_b=0.6,
+            initial_emotion=-0.3,  # UPDATED: Conflict scenario (matches environment default)
+            initial_trust=0.4,  # UPDATED: Lower trust for challenging scenario
+            initial_calmness_a=0.4,  # UPDATED: Moderate calmness (matches environment default)
+            initial_calmness_b=0.4,
             irritability_a=config["irritability_a"],
             irritability_b=config["irritability_b"],
             recovery_rate=0.02,

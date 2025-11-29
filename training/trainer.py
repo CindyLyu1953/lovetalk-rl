@@ -257,10 +257,12 @@ class MultiAgentTrainer:
 
                 # Store transition for experience replay (DQN)
                 # Skip for PPO (handled at episode end)
+                # NOTE: reward is now TEAM REWARD (both agents receive the same reward)
                 if (
                     hasattr(agent, "store_transition")
                     and "ppo" not in agent.__class__.__name__.lower()
                 ):
+                    # Both agents store transitions with the same team_reward
                     agent.store_transition(obs, action, reward, next_obs, done)
                     # Update DQN periodically
                     if len(agent.memory) >= agent.batch_size:
@@ -327,9 +329,11 @@ class MultiAgentTrainer:
                     "calmness_b": info.get("calmness_b", 0.0),
                     "termination_reason": info.get("termination_reason", "NEUTRAL"),
                 }
-                detailed_episode_data["total_reward_a"] = float(episode_reward_a)
-                detailed_episode_data["total_reward_b"] = float(episode_reward_b)
+                detailed_episode_data["total_team_reward_a"] = float(episode_reward_a)
+                detailed_episode_data["total_team_reward_b"] = float(episode_reward_b)
                 detailed_episode_data["episode_length"] = episode_length
+                # Note: Both agents receive team_reward during training
+                # Individual rewards are computed but not used for training
                 
                 # Save detailed episode data at specified intervals or for first/last episodes
                 if (
@@ -370,9 +374,10 @@ class MultiAgentTrainer:
         recent_conflict = self.stats["final_conflict"][-self.log_interval :]
 
         print(f"\nEpisode {episode}")
-        print(f"  Agent A - Avg Reward: {np.mean(recent_rewards_a):.3f}")
+        # Note: Both agents receive the same team_reward during training
+        print(f"  Agent A - Avg Team Reward: {np.mean(recent_rewards_a):.3f}")
         if recent_rewards_b:
-            print(f"  Agent B - Avg Reward: {np.mean(recent_rewards_b):.3f}")
+            print(f"  Agent B - Avg Team Reward: {np.mean(recent_rewards_b):.3f}")
         print(f"  Avg Episode Length: {np.mean(recent_lengths):.1f}")
         print(
             f"  Final State - Emotion: {np.mean(recent_emotion):.3f}, "
@@ -410,8 +415,8 @@ class MultiAgentTrainer:
                 "episode": ep["episode"],
                 "initial_state": ep["initial_state"],
                 "final_state": ep["final_state"],
-                "total_reward_a": ep.get("total_reward_a", 0.0),
-                "total_reward_b": ep.get("total_reward_b", 0.0),
+                "total_team_reward_a": ep.get("total_team_reward_a", ep.get("total_reward_a", 0.0)),
+                "total_team_reward_b": ep.get("total_team_reward_b", ep.get("total_reward_b", 0.0)),
                 "episode_length": ep.get("episode_length", 0),
                 "steps": ep["steps"],
             }

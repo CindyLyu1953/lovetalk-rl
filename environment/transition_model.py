@@ -150,27 +150,21 @@ class TransitionModel:
         delta_calmness += np.random.normal(0, noise_scale * 0.5)
         return delta_emotion, delta_trust, delta_calmness
 
-    def _sample_from_interval(self, low: float, high: float, rng: np.random.Generator) -> float:
+    def _compute_midpoint(self, low: float, high: float) -> float:
         """
-        Sample a value from [low, high] using a Beta distribution shaped according to polarity.
-
-        - Positive intervals (low >= 0): alpha=3, beta=2 (biased to upper range)
-        - Negative intervals (high <= 0): alpha=2, beta=3 (biased to lower range)
-        - Mixed intervals (cross zero): alpha=2.5, beta=2.5 (near-uniform)
+        Compute the midpoint (average) of [low, high] interval.
+        
+        UPGRADED: Changed from Beta sampling to simple average to reduce noise
+        and make transitions more predictable for learning.
+        
+        Args:
+            low: Lower bound of interval
+            high: Upper bound of interval
+        
+        Returns:
+            Midpoint (average) of the interval
         """
-        if high <= low:
-            return low
-
-        # Determine polarity based on interval
-        if low >= 0:
-            a, b = 3.0, 2.0
-        elif high <= 0:
-            a, b = 2.0, 3.0
-        else:
-            a, b = 2.5, 2.5
-
-        u = rng.beta(a, b)
-        return low + u * (high - low)
+        return (low + high) / 2.0
 
     def compute_transition_with_personality(
         self,
@@ -181,7 +175,10 @@ class TransitionModel:
     ) -> Tuple[float, float, float]:
         """
         Compute state transition given an action and an agent's personality using
-        personality-specific ranges and Beta sampling.
+        personality-specific ranges.
+        
+        UPGRADED: Changed from Beta sampling to midpoint (average) to reduce noise
+        and make learning more stable.
         """
         # Use personality ranges if available, otherwise fallback to neutral ranges
         ranges_for_person = self.personality_action_ranges.get(personality, self.personality_action_ranges.get(PersonalityType.NEUTRAL))
@@ -191,10 +188,10 @@ class TransitionModel:
 
         (e_low, e_high), (t_low, t_high), (c_low, c_high) = ranges_for_person[action]
 
-        # Sample each component using RNG and Beta-shaped distribution
-        delta_emotion = self._sample_from_interval(e_low, e_high, rng)
-        delta_trust = self._sample_from_interval(t_low, t_high, rng)
-        delta_calmness = self._sample_from_interval(c_low, c_high, rng)
+        # UPGRADED: Use midpoint (average) instead of sampling
+        delta_emotion = self._compute_midpoint(e_low, e_high)
+        delta_trust = self._compute_midpoint(t_low, t_high)
+        delta_calmness = self._compute_midpoint(c_low, c_high)
 
         # Adjust calmness change by irritability: negative changes amplified, positive reduced
         if delta_calmness < 0:
@@ -202,11 +199,11 @@ class TransitionModel:
         else:
             delta_calmness *= 1 - irritability
 
-        # Add small gaussian noise to model remaining uncertainty
-        noise_scale = 0.02
-        delta_emotion += rng.normal(0, noise_scale)
-        delta_trust += rng.normal(0, noise_scale)
-        delta_calmness += rng.normal(0, noise_scale * 0.5)
+        # REMOVED: Gaussian noise (deterministic transitions for better learning)
+        # noise_scale = 0.02
+        # delta_emotion += rng.normal(0, noise_scale)
+        # delta_trust += rng.normal(0, noise_scale)
+        # delta_calmness += rng.normal(0, noise_scale * 0.5)
 
         return float(delta_emotion), float(delta_trust), float(delta_calmness)
 

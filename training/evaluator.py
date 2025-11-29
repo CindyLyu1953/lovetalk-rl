@@ -102,11 +102,19 @@ class Evaluator:
             # Take step
             next_obs, reward, done, truncated, info = self.env.step(action)
 
-            # Store reward
+            # Store reward (team reward) and individual rewards
             if current_agent == 0:
-                episode_data["rewards_a"].append(reward)
+                episode_data["rewards_a"].append(reward)  # Team reward
+                # Store individual reward for analysis
+                if "individual_reward_a" not in episode_data:
+                    episode_data["individual_reward_a"] = []
+                episode_data["individual_reward_a"].append(info.get("individual_reward_a", 0.0))
             else:
-                episode_data["rewards_b"].append(reward)
+                episode_data["rewards_b"].append(reward)  # Team reward
+                # Store individual reward for analysis
+                if "individual_reward_b" not in episode_data:
+                    episode_data["individual_reward_b"] = []
+                episode_data["individual_reward_b"].append(info.get("individual_reward_b", 0.0))
 
             obs = next_obs
             episode_data["states"].append(obs.copy())
@@ -142,6 +150,11 @@ class Evaluator:
             final_calmness_b = final_state.get("calmness_b", 0.5)
 
         metrics = {
+            "total_team_reward_a": sum(episode_data["rewards_a"]),  # Team reward for A
+            "total_team_reward_b": sum(episode_data["rewards_b"]),  # Team reward for B
+            "total_individual_reward_a": sum(episode_data.get("individual_reward_a", [])),  # Individual reward for A
+            "total_individual_reward_b": sum(episode_data.get("individual_reward_b", [])),  # Individual reward for B
+            # Legacy fields
             "total_reward_a": sum(episode_data["rewards_a"]),
             "total_reward_b": sum(episode_data["rewards_b"]),
             "episode_length": step_count,
@@ -195,10 +208,22 @@ class Evaluator:
         # Aggregate metrics
         aggregated = {
             "num_episodes": num_episodes,
+            # Team rewards (used for training)
+            "avg_team_reward_a": np.mean([m["total_team_reward_a"] for m in all_metrics]),
+            "avg_team_reward_b": np.mean([m["total_team_reward_b"] for m in all_metrics]),
+            "std_team_reward_a": np.std([m["total_team_reward_a"] for m in all_metrics]),
+            "std_team_reward_b": np.std([m["total_team_reward_b"] for m in all_metrics]),
+            # Individual rewards (for evaluation/analysis)
+            "avg_individual_reward_a": np.mean([m["total_individual_reward_a"] for m in all_metrics]),
+            "avg_individual_reward_b": np.mean([m["total_individual_reward_b"] for m in all_metrics]),
+            "std_individual_reward_a": np.std([m["total_individual_reward_a"] for m in all_metrics]),
+            "std_individual_reward_b": np.std([m["total_individual_reward_b"] for m in all_metrics]),
+            # Legacy fields (backward compatibility)
             "avg_reward_a": np.mean([m["total_reward_a"] for m in all_metrics]),
             "avg_reward_b": np.mean([m["total_reward_b"] for m in all_metrics]),
             "std_reward_a": np.std([m["total_reward_a"] for m in all_metrics]),
             "std_reward_b": np.std([m["total_reward_b"] for m in all_metrics]),
+            # Other metrics
             "avg_episode_length": np.mean([m["episode_length"] for m in all_metrics]),
             "avg_final_emotion": np.mean([m["final_emotion"] for m in all_metrics]),
             "avg_final_trust": np.mean([m["final_trust"] for m in all_metrics]),
@@ -232,14 +257,30 @@ class Evaluator:
         print("Evaluation Results")
         print("=" * 60)
         print(f"Number of Episodes: {results['num_episodes']}")
-        print(f"\nRewards:")
+        print(f"\nTeam Rewards (used for training):")
         print(
-            f"  Agent A - Mean: {results['avg_reward_a']:.3f} ± {results['std_reward_a']:.3f}"
+            f"  Agent A - Mean: {results.get('avg_team_reward_a', results['avg_reward_a']):.3f} ± "
+            f"{results.get('std_team_reward_a', results['std_reward_a']):.3f}"
         )
-        if "avg_reward_b" in results:
+        if "avg_team_reward_b" in results or "avg_reward_b" in results:
             print(
-                f"  Agent B - Mean: {results['avg_reward_b']:.3f} ± {results['std_reward_b']:.3f}"
+                f"  Agent B - Mean: {results.get('avg_team_reward_b', results['avg_reward_b']):.3f} ± "
+                f"{results.get('std_team_reward_b', results['std_reward_b']):.3f}"
             )
+        if "avg_individual_reward_a" in results:
+            print(f"\nIndividual Rewards (for analysis):")
+            print(
+                f"  Agent A - Mean: {results['avg_individual_reward_a']:.3f} ± {results['std_individual_reward_a']:.3f}"
+            )
+            print(
+                f"  Agent B - Mean: {results['avg_individual_reward_b']:.3f} ± {results['std_individual_reward_b']:.3f}"
+            )
+            # Calculate cooperation score
+            coop_score_a = results['avg_individual_reward_a'] if results['avg_individual_reward_a'] > 0 else 0
+            coop_score_b = results['avg_individual_reward_b'] if results['avg_individual_reward_b'] > 0 else 0
+            print(f"\nCooperation Scores:")
+            print(f"  Agent A: {coop_score_a:.3f} (higher = more cooperative)")
+            print(f"  Agent B: {coop_score_b:.3f} (higher = more cooperative)")
         print(f"\nEpisode Statistics:")
         print(f"  Average Length: {results['avg_episode_length']:.1f} steps")
         print(f"\nFinal State Metrics:")
