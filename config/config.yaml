@@ -85,7 +85,7 @@ deep_rl:
 
 # Training Configuration
 training:
-  num_episodes: 8000  # Deep RL: 8000 episodes
+  num_episodes: 4000  # Deep RL: 4000 episodes
   train_mode: self_play  # Options: self_play, fixed_opponent
   log_interval: 200  # Deep RL: log every 200 episodes
   save_interval: 2000  # Deep RL: save every 2000 episodes

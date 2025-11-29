@@ -8,7 +8,7 @@ import json
 import numpy as np
 from pathlib import Path
 
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from environment import RelationshipEnv
 from agents.deep_rl import DQNAgent
@@ -21,8 +21,8 @@ def evaluate_run(checkpoint_dir, exp_config, num_episodes=100):
     checkpoint_dir = Path(checkpoint_dir)
 
     # Find checkpoint files
-    agent_a_path = checkpoint_dir / "agent_a_ep8000.pth"
-    agent_b_path = checkpoint_dir / "agent_b_ep8000.pth"
+    agent_a_path = checkpoint_dir / "agent_a_ep4000.pth"
+    agent_b_path = checkpoint_dir / "agent_b_ep4000.pth"
 
     if not agent_a_path.exists():
         print(f"Error: Agent A checkpoint not found: {agent_a_path}")

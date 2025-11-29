@@ -48,7 +48,7 @@ TERMINATION_THRESHOLDS = {
 
 # Training configuration
 TRAINING_CONFIG = {
-    "num_episodes": 8000,
+    "num_episodes": 4000,
     "train_mode": "self_play",
     "log_interval": 200,
     "save_interval": 2000,

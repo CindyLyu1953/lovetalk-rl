@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Batch evaluation script for all D1-D5 experiments
-# Evaluates the latest trained models (run_15) for each experiment
+# Evaluates the trained models (run_1) for each experiment
 #
 
 echo "=========================================="
@@ -24,24 +24,24 @@ for exp in "${EXPERIMENTS[@]}"; do
     echo "=========================================="
     
     # Check if checkpoint exists
-    CHECKPOINT_DIR="./experiments/$exp/checkpoints/run_15"
+    CHECKPOINT_DIR="./experiments/$exp/checkpoints/run_1"
     
-    if [ ! -f "$CHECKPOINT_DIR/agent_a_ep8000.pth" ]; then
+    if [ ! -f "$CHECKPOINT_DIR/agent_a_ep4000.pth" ]; then
         echo "❌ ERROR: Agent A checkpoint not found for $exp"
-        echo "   Expected: $CHECKPOINT_DIR/agent_a_ep8000.pth"
+        echo "   Expected: $CHECKPOINT_DIR/agent_a_ep4000.pth"
         FAILURE_COUNT=$((FAILURE_COUNT + 1))
         continue
     fi
     
-    if [ ! -f "$CHECKPOINT_DIR/agent_b_ep8000.pth" ]; then
+    if [ ! -f "$CHECKPOINT_DIR/agent_b_ep4000.pth" ]; then
         echo "❌ ERROR: Agent B checkpoint not found for $exp"
-        echo "   Expected: $CHECKPOINT_DIR/agent_b_ep8000.pth"
+        echo "   Expected: $CHECKPOINT_DIR/agent_b_ep4000.pth"
         FAILURE_COUNT=$((FAILURE_COUNT + 1))
         continue
     fi
     
     # Run evaluation
-    OMP_NUM_THREADS=1 python evaluate_single_run.py \
+    OMP_NUM_THREADS=1 python scripts/evaluate_single_run.py \
         --checkpoint_dir "$CHECKPOINT_DIR" \
         --experiment "$exp" \
         --num_episodes 100
@@ -49,7 +49,7 @@ for exp in "${EXPERIMENTS[@]}"; do
     # Check if evaluation succeeded
     if [ $? -eq 0 ]; then
         echo "✅ $exp evaluation completed successfully"
-        echo "   Results saved to: $CHECKPOINT_DIR/evaluation_results.json"
+        echo "   Results saved to: ./experiments/$exp/checkpoints/run_1/evaluation_results.json"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
     else
         echo "❌ $exp evaluation failed"
@@ -73,7 +73,7 @@ if [ $SUCCESS_COUNT -eq 5 ]; then
     echo ""
     echo "Results saved in:"
     for exp in "${EXPERIMENTS[@]}"; do
-        echo "  - ./experiments/$exp/checkpoints/run_15/evaluation_results.json"
+        echo "  - ./experiments/$exp/checkpoints/run_1/evaluation_results.json"
     done
 else
     echo "⚠️ Some evaluations failed. Please check the output above."
