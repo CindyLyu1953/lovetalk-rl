@@ -12,8 +12,9 @@ A multi-agent reinforcement learning system for relationship conflict resolution
 4. [Environment](#environment)
 5. [Installation](#installation)
 6. [Quick Start](#quick-start)
-7. [Project Structure](#project-structure)
-8. [References](#references)
+7. [LLM Dialogue Renderer](#llm-dialogue-renderer-optional)
+8. [Project Structure](#project-structure)
+9. [References](#references)
 
 ---
 
@@ -238,12 +239,72 @@ experiments/
 
 ---
 
+## LLM Dialogue Renderer (Optional Extension)
+
+A standalone module for converting RL semantic actions into natural language utterances using Gemini API.
+
+**⚠️ Important:** This module is **completely isolated** from RL training. It does NOT affect state transitions, rewards, or policy learning. It is purely for generating natural language output.
+
+**Key Features:**
+- **Completely Isolated:** Does NOT affect RL training, rewards, or state
+- **LLM-Powered:** Uses Gemini Flash for fast, natural text generation
+- **Scenario-Aware:** 10 built-in conflict scenarios (e.g., forgot anniversary, work neglect, trust issues)
+- **Simple API:** One function to generate dialogue from action labels
+
+### What are "Scenarios"?
+
+**Scenarios = Conflict backgrounds/premises**, not dialogue states.
+
+Example:
+- ✅ Scenario: "A forgot the anniversary, B feels disappointed" (why conflict started)
+- ❌ Not a scenario: "Currently arguing" (dialogue state)
+
+The entire conversation happens under the same scenario.
+
+### Quick Example
+
+```python
+from llm_extension import DialogueRenderer
+
+renderer = DialogueRenderer()  # Requires GEMINI_API_KEY env var
+
+utterance = renderer.generate_reply(
+    scenario_id="forgot_anniversary",  # Conflict background
+    agent_role="A",                    # You are A
+    action_label="apologize",          # RL chose this action
+    prev_message="你连我们的纪念日都忘了？"  # What B just said
+)
+# Output: "对不起宝贝，我真的忘了，我知道这让你很伤心。"
+```
+
+### Setup
+
+```bash
+# Install Gemini API
+pip install google-generativeai
+
+# Set API key (in your shell or .bashrc/.zshrc)
+export GEMINI_API_KEY="your-api-key-here"
+
+# Run example
+python llm_extension/dialogue_renderer.py
+```
+
+**📖 Full Documentation:** See [`llm_extension/README.md`](llm_extension/README.md)
+
+---
+
 ## Project Structure
 
 ```
 lovetalk-rl/
 ├── README.md                      # This file
 ├── requirements.txt               # Python dependencies
+│
+├── llm_extension/                 # LLM Extension (optional, completely isolated)
+│   ├── __init__.py
+│   ├── dialogue_renderer.py       # Natural language generator
+│   └── README.md                  # Extension documentation
 │
 ├── agents/                        # RL Agents
 │   └── deep_rl/
