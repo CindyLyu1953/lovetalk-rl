@@ -93,18 +93,18 @@ All scenarios are educational simulations for teaching conflict resolution.
 from llm_extension import DialogueRenderer
 
 # Initialize renderer
-renderer = DialogueRenderer()  # Reads API key from environment variable
+from llm_extension import DialogueRenderer
 
-# Generate educational dialogue example
+renderer = DialogueRenderer()  # Requires GEMINI_API_KEY env var
+
 utterance = renderer.generate_reply(
-    scenario_id="forgot_anniversary",  # Simulated scenario
-    agent_role="A",                    # You are A in this simulation
-    action_label="apologize",          # RL policy selected "apologize"
-    prev_message="How could you forget our anniversary?"
+    scenario_id="forgot_anniversary",   # Conflict background
+    agent_role="A",                     # You are agent A
+    action_label="apologize",           # The RL policy selected this action
+    prev_message="You forgot our anniversary?"  # What agent B just said
 )
 
-print(utterance)
-# Example output (in Chinese for learning purposes)
+# Output: "I'm really sorry, I truly forgot, and I know that hurt you."
 ```
 
 ### Full Conversation Example
