@@ -1,10 +1,12 @@
 # LoveTalk-RL: Multi-Agent Conflict Resolution with Double DQN
 
+Authors: Chenxi Guo, Jiayi Peng, Kexin Lyu, Yiran Tao
+
 A multi-agent reinforcement learning system for relationship conflict resolution using Double DQN with soft target updates.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 1. [Overview](#overview)
 2. [Model Architecture](#model-architecture)
