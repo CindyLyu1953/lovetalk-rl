@@ -271,12 +271,13 @@ from llm_extension import DialogueRenderer
 renderer = DialogueRenderer()  # Requires GEMINI_API_KEY env var
 
 utterance = renderer.generate_reply(
-    scenario_id="forgot_anniversary",  # Conflict background
-    agent_role="A",                    # You are A
-    action_label="apologize",          # RL chose this action
-    prev_message="你连我们的纪念日都忘了？"  # What B just said
+    scenario_id="forgot_anniversary",   # Conflict background
+    agent_role="A",                     # You are agent A
+    action_label="apologize",           # The RL policy selected this action
+    prev_message="You forgot our anniversary?"  # What agent B just said
 )
-# Output: "对不起宝贝，我真的忘了，我知道这让你很伤心。"
+
+# Output: "I'm really sorry, I truly forgot, and I know that hurt you."
 ```
 
 ### Setup
