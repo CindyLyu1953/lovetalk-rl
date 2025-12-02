@@ -51,17 +51,17 @@ Total turns: 8
 ================================================================================
 
 Turn 1: Character B [Action=BLAME]
-Character B: 你怎么能忘记这么重要的事情？
+Character B: How could you forget something this important?
   → Reward: -0.523
   → State: emotion=-0.456, trust=0.382, stage=1
 
 Turn 2: Character A [Action=APOLOGIZE]
-Character A: 对不起，我真的很抱歉，我不应该忘记的。
+Character A: I'm so sorry, I really shouldn't have forgotten, I apologize.
   → Reward: 0.234
   → State: emotion=-0.289, trust=0.445, stage=2
 
 Turn 3: Character B [Action=EMPATHIZE]
-Character B: 我理解你最近很忙，但这对我真的很重要。
+Character B: I understand you've been busy lately, but this was really important to me.
   → Reward: 0.187
   → State: emotion=-0.112, trust=0.523, stage=2
 

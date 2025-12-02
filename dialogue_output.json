@@ -1,0 +1,22 @@
+{
+  "scenario": "forgot_event",
+  "episode_file": "experiments/D1/checkpoints/run_15/detailed_episodes.json",
+  "episode_idx": 11,
+  "turns": [
+    {
+      "turn": 1,
+      "agent": "A",
+      "action": "blame",
+      "action_name": "BLAME",
+      "utterance": "Well, if you had reminded me like you were supposed to, I wouldn't have forgotten! It's not all my fault.",
+      "reward": -23.11625,
+      "state": {
+        "emotion": -0.7549999999999999,
+        "trust": 0.050000000000000044,
+        "conflict": 0.8524999999999999,
+        "calmness_a": 0.09800000000000002,
+        "calmness_b": 0.2268
+      }
+    }
+  ]
+}

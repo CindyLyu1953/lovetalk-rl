@@ -53,7 +53,7 @@ communication patterns in various scenarios. All scenes are purely fictional and
 no connection to real people, real relationships, or real events. No emotional or
 personal harm is possible as these are entirely imaginary interactions.
 
-Your task is to generate natural Chinese conversational utterances based on:
+Your task is to generate natural English conversational utterances based on:
 - A fictional scene description (imaginary scenario context)
 - The acting character (Character A or Character B)
 - A communication action (one of 10 predefined actions based on communication research)
@@ -72,7 +72,7 @@ Communication Actions (based on psychological research):
 - withdraw: Avoiding or shutting down communication
 
 Requirements:
-1. Generate 1-2 sentences of natural Chinese dialogue
+1. Generate 1-2 sentences of natural English dialogue
 2. Match the specified communication action exactly
 3. Keep tone conversational but not overly dramatic
 4. Output only the dialogue, no explanations
@@ -83,7 +83,7 @@ Scene: Character A missed a scheduled activity
 Character: A
 Action: apologize
 Other said: This was important to me.
-Output: 对不起，我真的不应该忘记这件事，我知道这对你很重要。"""
+Output: I'm so sorry, I really shouldn't have forgotten this, I know it was important to you."""
 
     def __init__(self, api_key: Optional[str] = None):
         """
@@ -151,7 +151,7 @@ Output: 对不起，我真的不应该忘记这件事，我知道这对你很重
             conversation_history: Optional list of previous dialogue turns [{"agent": "A", "text": "..."}]
 
         Returns:
-            Generated utterance in Chinese (1-2 sentences) for fictional characters
+            Generated utterance in English (1-2 sentences) for fictional characters
 
         Raises:
             ValueError: If scenario_id is not recognized
