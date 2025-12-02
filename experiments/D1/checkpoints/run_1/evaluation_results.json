@@ -1,0 +1,42 @@
+{
+  "num_episodes": 100,
+  "avg_team_reward_a": -18.434050000000003,
+  "avg_team_reward_b": 14.365525,
+  "std_team_reward_a": 1.8521999999999998,
+  "std_team_reward_b": 16.223275,
+  "avg_individual_reward_a": 0.0999999999999999,
+  "avg_individual_reward_b": 2.65,
+  "std_individual_reward_a": 0.24999999999999994,
+  "std_individual_reward_b": 2.6999999999999993,
+  "avg_reward_a": -18.434050000000003,
+  "avg_reward_b": 14.365525,
+  "std_reward_a": 1.8521999999999998,
+  "std_reward_b": 16.223275,
+  "avg_episode_length": 30.0,
+  "avg_final_emotion": -0.275,
+  "avg_final_trust": 0.6749999999999998,
+  "avg_final_conflict": 0.31999999999999995,
+  "avg_final_calmness_a": 0.26680000000000015,
+  "avg_final_calmness_b": 0.6119000000000002,
+  "success_rate": 0.0,
+  "failure_rate": 0.5,
+  "neutral_rate": 0.5,
+  "action_distribution_a": {
+    "0": 150,
+    "1": 50,
+    "5": 100,
+    "6": 250,
+    "8": 100,
+    "9": 850
+  },
+  "action_distribution_b": {
+    "8": 150,
+    "7": 200,
+    "6": 100,
+    "5": 600,
+    "3": 250,
+    "1": 100,
+    "0": 50,
+    "4": 50
+  }
+}

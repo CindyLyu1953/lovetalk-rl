@@ -1,0 +1,16 @@
+{
+  "exp_id": "D1",
+  "config": {
+    "algorithm": "dqn",
+    "mode": "self_play",
+    "personality_a": "neutral",
+    "personality_b": "neutral",
+    "description": "\u6df1\u5ea6 baseline (Deep baseline)",
+    "category": "deep"
+  },
+  "num_episodes": 5000,
+  "start_time": "2025-11-15T18:01:01.873725",
+  "command": "python scripts/train_deep.py --algorithm dqn --episodes 5000 --personality_a neutral --personality_b neutral --train_mode self_play --save_dir experiments/D1/checkpoints --log_interval 100 --save_interval 1000 --history_length 10",
+  "end_time": "2025-11-15T18:01:53.666298",
+  "status": "completed"
+}

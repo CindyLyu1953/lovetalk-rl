@@ -1,0 +1,72 @@
+{
+  "experiment": "D2",
+  "personality_a": "neurotic",
+  "personality_b": "agreeable",
+  "aggregated_metrics": {
+    "num_runs": 15,
+    "team_reward_a": {
+      "mean": 16.419878333333333,
+      "std": 10.952399983457267
+    },
+    "team_reward_b": {
+      "mean": 0.17344833333333304,
+      "std": 14.39289803226886
+    },
+    "individual_reward_a": {
+      "mean": 0.62,
+      "std": 0.3940389151678633
+    },
+    "individual_reward_b": {
+      "mean": 0.11166666666666668,
+      "std": 0.5418999497652269
+    },
+    "success_rate": {
+      "mean": 0.7666666666666667,
+      "std": 0.3590109871423003,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "failure_rate": {
+      "mean": 0.23333333333333334,
+      "std": 0.3590109871423003,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "neutral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "episode_length": {
+      "mean": 5.566666666666666,
+      "std": 1.6619934483090546,
+      "min": 2.5,
+      "max": 9.5
+    },
+    "final_emotion": {
+      "mean": 0.14516666666666672,
+      "std": 0.35930426598574583,
+      "min": -0.64,
+      "max": 0.4650000000000001
+    },
+    "final_trust": {
+      "mean": 0.8658333333333333,
+      "std": 0.21820225072675623,
+      "min": 0.3325000000000001,
+      "max": 1.0
+    },
+    "final_conflict": {
+      "mean": 0.13683333333333333,
+      "std": 0.21894580125887061
+    },
+    "final_calmness_a": {
+      "mean": 0.6633233333333334,
+      "std": 0.2316710439874225
+    },
+    "final_calmness_b": {
+      "mean": 0.5325833333333334,
+      "std": 0.23237842747457338
+    }
+  }
+}

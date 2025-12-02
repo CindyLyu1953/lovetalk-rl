@@ -1,0 +1,3452 @@
+[
+  {
+    "episode": 0,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.35500000000000004,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7487,
+      "calmness_b": 0.7529000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 2.97,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 3,
+        "action_name": "REASSURE",
+        "reward": 2.97,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.065,
+          "trust": 0.8400000000000001,
+          "conflict": 0.07999999999999996,
+          "calmness_a": 0.609,
+          "calmness_b": 0.5334000000000001
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.06499999761581421,
+          "trust": 0.8399999737739563,
+          "conflict": 0.07999999821186066,
+          "calmness": 0.5333999991416931
+        },
+        "state_after": {
+          "emotion": 0.35500000000000004,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7487,
+          "calmness_b": 0.7529000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.425,
+      "trust": 0.88,
+      "conflict": 0.06,
+      "calmness_a": 0.8183,
+      "calmness_b": 0.7857000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.01125,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 3.01125,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.15999999999999998,
+          "trust": 0.645,
+          "conflict": 0.1775,
+          "calmness_a": 0.687,
+          "calmness_b": 0.5802
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 3,
+        "action_name": "REASSURE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.1599999964237213,
+          "trust": 0.6449999809265137,
+          "conflict": 0.17749999463558197,
+          "calmness": 0.5802000164985657
+        },
+        "state_after": {
+          "emotion": 0.425,
+          "trust": 0.88,
+          "conflict": 0.06,
+          "calmness_a": 0.8183,
+          "calmness_b": 0.7857000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.435,
+      "trust": 0.855,
+      "conflict": 0.07250000000000001,
+      "calmness_a": 0.8162,
+      "calmness_b": 0.7822,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.01125,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 3.01125,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.15999999999999998,
+          "trust": 0.645,
+          "conflict": 0.1775,
+          "calmness_a": 0.687,
+          "calmness_b": 0.5802
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.1599999964237213,
+          "trust": 0.6449999809265137,
+          "conflict": 0.17749999463558197,
+          "calmness": 0.5802000164985657
+        },
+        "state_after": {
+          "emotion": 0.435,
+          "trust": 0.855,
+          "conflict": 0.07250000000000001,
+          "calmness_a": 0.8162,
+          "calmness_b": 0.7822
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.6499999999999999,
+      "trust": 0.15000000000000002,
+      "conflict": 0.75,
+      "calmness_a": 0.15400000000000005,
+      "calmness_b": 0.2604000000000001,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -22.65,
+    "total_team_reward_b": 0.0,
+    "episode_length": 1,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 7,
+        "action_name": "DEFENSIVE",
+        "reward": -22.65,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": -0.6499999999999999,
+          "trust": 0.15000000000000002,
+          "conflict": 0.75,
+          "calmness_a": 0.15400000000000005,
+          "calmness_b": 0.2604000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 4,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.6499999999999999,
+      "trust": 0.0,
+      "conflict": 0.825,
+      "calmness_a": 0.3395000000000001,
+      "calmness_b": 0.2837000000000002,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -19.177500000000002,
+    "total_team_reward_b": -1.8875000000000002,
+    "episode_length": 3,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 3.3912500000000003,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.14500000000000002,
+          "trust": 0.7050000000000001,
+          "conflict": 0.14749999999999996,
+          "calmness_a": 0.663,
+          "calmness_b": 0.5658000000000001
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 9,
+        "action_name": "WITHDRAW",
+        "reward": -1.8875000000000002,
+        "state_before": {
+          "emotion": 0.14499999582767487,
+          "trust": 0.7049999833106995,
+          "conflict": 0.14749999344348907,
+          "calmness": 0.5658000111579895
+        },
+        "state_after": {
+          "emotion": -0.3,
+          "trust": 0.18500000000000005,
+          "conflict": 0.5575,
+          "calmness_a": 0.5855,
+          "calmness_b": 0.4233000000000001
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 7,
+        "action_name": "DEFENSIVE",
+        "reward": -22.56875,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.1850000023841858,
+          "conflict": 0.5575000047683716,
+          "calmness": 0.5855000019073486
+        },
+        "state_after": {
+          "emotion": -0.6499999999999999,
+          "trust": 0.0,
+          "conflict": 0.825,
+          "calmness_a": 0.3395000000000001,
+          "calmness_b": 0.2837000000000002
+        }
+      }
+    ]
+  },
+  {
+    "episode": 5,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.63,
+      "trust": 0.0,
+      "conflict": 0.815,
+      "calmness_a": 0.217,
+      "calmness_b": 0.2982,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -22.0225,
+    "total_team_reward_b": 0.0,
+    "episode_length": 1,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 9,
+        "action_name": "WITHDRAW",
+        "reward": -22.0225,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": -0.63,
+          "trust": 0.0,
+          "conflict": 0.815,
+          "calmness_a": 0.217,
+          "calmness_b": 0.2982
+        }
+      }
+    ]
+  },
+  {
+    "episode": 6,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.7749999999999999,
+      "trust": 0.10499999999999998,
+      "conflict": 0.835,
+      "calmness_a": 0.29750000000000004,
+      "calmness_b": 0.25850000000000006,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -20.471249999999998,
+    "total_team_reward_b": -1.9187500000000002,
+    "episode_length": 3,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 9,
+        "action_name": "WITHDRAW",
+        "reward": -1.9187500000000002,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": -0.425,
+          "trust": 0.355,
+          "conflict": 0.535,
+          "calmness_a": 0.5435,
+          "calmness_b": 0.3981
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 7,
+        "action_name": "DEFENSIVE",
+        "reward": -23.15,
+        "state_before": {
+          "emotion": -0.42500001192092896,
+          "trust": 0.35499998927116394,
+          "conflict": 0.5350000262260437,
+          "calmness": 0.5435000061988831
+        },
+        "state_after": {
+          "emotion": -0.7749999999999999,
+          "trust": 0.10499999999999998,
+          "conflict": 0.835,
+          "calmness_a": 0.29750000000000004,
+          "calmness_b": 0.25850000000000006
+        }
+      }
+    ]
+  },
+  {
+    "episode": 7,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.7549999999999999,
+      "trust": 0.050000000000000044,
+      "conflict": 0.8524999999999999,
+      "calmness_a": 0.09800000000000002,
+      "calmness_b": 0.2268,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -23.11625,
+    "total_team_reward_b": 0.0,
+    "episode_length": 1,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 8,
+        "action_name": "BLAME",
+        "reward": -23.11625,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": -0.7549999999999999,
+          "trust": 0.050000000000000044,
+          "conflict": 0.8524999999999999,
+          "calmness_a": 0.09800000000000002,
+          "calmness_b": 0.2268
+        }
+      }
+    ]
+  },
+  {
+    "episode": 8,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.6499999999999999,
+      "trust": 0.15000000000000002,
+      "conflict": 0.75,
+      "calmness_a": 0.15400000000000005,
+      "calmness_b": 0.2604000000000001,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -22.65,
+    "total_team_reward_b": 0.0,
+    "episode_length": 1,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 7,
+        "action_name": "DEFENSIVE",
+        "reward": -22.65,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": -0.6499999999999999,
+          "trust": 0.15000000000000002,
+          "conflict": 0.75,
+          "calmness_a": 0.15400000000000005,
+          "calmness_b": 0.2604000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 9,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.28500000000000003,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7523,
+      "calmness_b": 0.7461,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 2.6787500000000004,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 3,
+        "action_name": "REASSURE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": 0.28500000000000003,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7523,
+          "calmness_b": 0.7461
+        }
+      }
+    ]
+  },
+  {
+    "episode": 99,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.35500000000000004,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7412000000000001,
+      "calmness_b": 0.7372000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.35500000000000004,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7412000000000001,
+          "calmness_b": 0.7372000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 199,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.8714999999999999,
+      "calmness_b": 0.6589,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 4.595000000000001,
+    "total_team_reward_b": 22.19375,
+    "episode_length": 4,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 8,
+        "action_name": "BLAME",
+        "reward": -2.80625,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": -0.39999999999999997,
+          "trust": 0.51,
+          "conflict": 0.44499999999999995,
+          "calmness_a": 0.4772,
+          "calmness_b": 0.28759999999999997
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 1.9162500000000002,
+        "state_before": {
+          "emotion": -0.4000000059604645,
+          "trust": 0.5099999904632568,
+          "conflict": 0.4449999928474426,
+          "calmness": 0.4772000014781952
+        },
+        "state_after": {
+          "emotion": 0.04500000000000004,
+          "trust": 0.8150000000000001,
+          "conflict": 0.09249999999999997,
+          "calmness_a": 0.7402,
+          "calmness_b": 0.45339999999999997
+        }
+      },
+      {
+        "step": 3,
+        "agent": "B",
+        "action": 3,
+        "action_name": "REASSURE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.04500000178813934,
+          "trust": 0.8149999976158142,
+          "conflict": 0.0925000011920929,
+          "calmness": 0.45339998602867126
+        },
+        "state_after": {
+          "emotion": 0.31000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.8714999999999999,
+          "calmness_b": 0.6589
+        }
+      }
+    ]
+  },
+  {
+    "episode": 299,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": -0.8199999999999998,
+      "trust": 0.18000000000000005,
+      "conflict": 0.8199999999999998,
+      "calmness_a": 0.21620000000000003,
+      "calmness_b": 0.16939999999999997,
+      "termination_reason": "FAILURE"
+    },
+    "total_team_reward_a": -0.1962499999999996,
+    "total_team_reward_b": -23.358749999999997,
+    "episode_length": 4,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 6,
+        "action_name": "CHANGE_TOPIC",
+        "reward": 0.16250000000000003,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": 0.05500000000000002,
+          "trust": 0.895,
+          "conflict": 0.05249999999999999,
+          "calmness_a": 0.662,
+          "calmness_b": 0.5956
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 8,
+        "action_name": "BLAME",
+        "reward": -2.875,
+        "state_before": {
+          "emotion": 0.054999999701976776,
+          "trust": 0.8949999809265137,
+          "conflict": 0.05249999836087227,
+          "calmness": 0.6620000004768372
+        },
+        "state_after": {
+          "emotion": -0.3999999999999999,
+          "trust": 0.545,
+          "conflict": 0.42749999999999994,
+          "calmness_a": 0.36000000000000004,
+          "calmness_b": 0.4224
+        }
+      },
+      {
+        "step": 3,
+        "agent": "B",
+        "action": 8,
+        "action_name": "BLAME",
+        "reward": -23.52125,
+        "state_before": {
+          "emotion": -0.4000000059604645,
+          "trust": 0.5450000166893005,
+          "conflict": 0.42750000953674316,
+          "calmness": 0.42239999771118164
+        },
+        "state_after": {
+          "emotion": -0.8199999999999998,
+          "trust": 0.18000000000000005,
+          "conflict": 0.8199999999999998,
+          "calmness_a": 0.21620000000000003,
+          "calmness_b": 0.16939999999999997
+        }
+      }
+    ]
+  },
+  {
+    "episode": 399,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.42500000000000004,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.9330000000000002,
+      "calmness_b": 0.7358,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 6.4975000000000005,
+    "total_team_reward_b": 22.4425,
+    "episode_length": 4,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 7,
+        "action_name": "DEFENSIVE",
+        "reward": -2.5575,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": -0.32999999999999996,
+          "trust": 0.5549999999999999,
+          "conflict": 0.3875,
+          "calmness_a": 0.5084000000000001,
+          "calmness_b": 0.3396
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 3.81875,
+        "state_before": {
+          "emotion": -0.33000001311302185,
+          "trust": 0.5550000071525574,
+          "conflict": 0.38749998807907104,
+          "calmness": 0.508400022983551
+        },
+        "state_after": {
+          "emotion": 0.13,
+          "trust": 0.7999999999999999,
+          "conflict": 0.10000000000000003,
+          "calmness_a": 0.7954000000000001,
+          "calmness_b": 0.5198
+        }
+      },
+      {
+        "step": 3,
+        "agent": "B",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.12999999523162842,
+          "trust": 0.800000011920929,
+          "conflict": 0.10000000149011612,
+          "calmness": 0.5198000073432922
+        },
+        "state_after": {
+          "emotion": 0.42500000000000004,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.9330000000000002,
+          "calmness_b": 0.7358
+        }
+      }
+    ]
+  },
+  {
+    "episode": 499,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.255,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7292,
+      "calmness_b": 0.7076,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 2.6787500000000004,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": 0.255,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7292,
+          "calmness_b": 0.7076
+        }
+      }
+    ]
+  },
+  {
+    "episode": 599,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.45,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.8267000000000001,
+      "calmness_b": 0.7997000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.01125,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 3.01125,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.15999999999999998,
+          "trust": 0.645,
+          "conflict": 0.1775,
+          "calmness_a": 0.687,
+          "calmness_b": 0.5802
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.1599999964237213,
+          "trust": 0.6449999809265137,
+          "conflict": 0.17749999463558197,
+          "calmness": 0.5802000164985657
+        },
+        "state_after": {
+          "emotion": 0.45,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.8267000000000001,
+          "calmness_b": 0.7997000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 699,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.27,
+      "trust": 0.825,
+      "conflict": 0.08750000000000002,
+      "calmness_a": 0.9387,
+      "calmness_b": 0.7453000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 6.52125,
+    "total_team_reward_b": 23.08125,
+    "episode_length": 4,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 9,
+        "action_name": "WITHDRAW",
+        "reward": -1.9187500000000002,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": -0.425,
+          "trust": 0.355,
+          "conflict": 0.535,
+          "calmness_a": 0.5435,
+          "calmness_b": 0.3981
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 3.8425,
+        "state_before": {
+          "emotion": -0.42500001192092896,
+          "trust": 0.35499998927116394,
+          "conflict": 0.5350000262260437,
+          "calmness": 0.5435000061988831
+        },
+        "state_after": {
+          "emotion": 0.034999999999999976,
+          "trust": 0.6,
+          "conflict": 0.2,
+          "calmness_a": 0.8305,
+          "calmness_b": 0.5783
+        }
+      },
+      {
+        "step": 3,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.03500000014901161,
+          "trust": 0.6000000238418579,
+          "conflict": 0.20000000298023224,
+          "calmness": 0.5782999992370605
+        },
+        "state_after": {
+          "emotion": 0.27,
+          "trust": 0.825,
+          "conflict": 0.08750000000000002,
+          "calmness_a": 0.9387,
+          "calmness_b": 0.7453000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 799,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.36000000000000004,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7466,
+      "calmness_b": 0.7494000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 2.97,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 3,
+        "action_name": "REASSURE",
+        "reward": 2.97,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.065,
+          "trust": 0.8400000000000001,
+          "conflict": 0.07999999999999996,
+          "calmness_a": 0.609,
+          "calmness_b": 0.5334000000000001
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.06499999761581421,
+          "trust": 0.8399999737739563,
+          "conflict": 0.07999999821186066,
+          "calmness": 0.5333999991416931
+        },
+        "state_after": {
+          "emotion": 0.36000000000000004,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7466,
+          "calmness_b": 0.7494000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 899,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.375,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.883,
+      "calmness_b": 0.7362,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 27.67875,
+    "total_team_reward_b": 0.16250000000000003,
+    "episode_length": 3,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6787500000000004,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.020000000000000018,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness_a": 0.621,
+          "calmness_b": 0.5406
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 6,
+        "action_name": "CHANGE_TOPIC",
+        "reward": 0.16250000000000003,
+        "state_before": {
+          "emotion": 0.019999999552965164,
+          "trust": 0.875,
+          "conflict": 0.0625,
+          "calmness": 0.5406000018119812
+        },
+        "state_after": {
+          "emotion": 0.05500000000000002,
+          "trust": 0.895,
+          "conflict": 0.05249999999999999,
+          "calmness_a": 0.662,
+          "calmness_b": 0.5956
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.054999999701976776,
+          "trust": 0.8949999809265137,
+          "conflict": 0.05249999836087227,
+          "calmness": 0.6620000004768372
+        },
+        "state_after": {
+          "emotion": 0.375,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.883,
+          "calmness_b": 0.7362
+        }
+      }
+    ]
+  },
+  {
+    "episode": 999,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.3950000000000001,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.9886000000000001,
+      "calmness_b": 0.5970000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 9.56,
+    "total_team_reward_b": 19.67625,
+    "episode_length": 6,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 8,
+        "action_name": "BLAME",
+        "reward": -2.79125,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": -0.33999999999999997,
+          "trust": 0.525,
+          "conflict": 0.4075,
+          "calmness_a": 0.4682000000000001,
+          "calmness_b": 0.2822
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 3.82125,
+        "state_before": {
+          "emotion": -0.3400000035762787,
+          "trust": 0.5249999761581421,
+          "conflict": 0.4074999988079071,
+          "calmness": 0.4681999981403351
+        },
+        "state_after": {
+          "emotion": 0.12,
+          "trust": 0.77,
+          "conflict": 0.11499999999999999,
+          "calmness_a": 0.7552000000000001,
+          "calmness_b": 0.46240000000000003
+        }
+      },
+      {
+        "step": 3,
+        "agent": "B",
+        "action": 7,
+        "action_name": "DEFENSIVE",
+        "reward": -2.5324999999999998,
+        "state_before": {
+          "emotion": 0.11999999731779099,
+          "trust": 0.7699999809265137,
+          "conflict": 0.11500000208616257,
+          "calmness": 0.46239998936653137
+        },
+        "state_after": {
+          "emotion": -0.22999999999999998,
+          "trust": 0.45,
+          "conflict": 0.39,
+          "calmness_a": 0.6426000000000002,
+          "calmness_b": 0.2614000000000001
+        }
+      },
+      {
+        "step": 4,
+        "agent": "A",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 2.6612500000000003,
+        "state_before": {
+          "emotion": -0.23000000417232513,
+          "trust": 0.44999998807907104,
+          "conflict": 0.38999998569488525,
+          "calmness": 0.6425999999046326
+        },
+        "state_after": {
+          "emotion": 0.09000000000000002,
+          "trust": 0.925,
+          "conflict": 0.03749999999999998,
+          "calmness_a": 0.8636000000000001,
+          "calmness_b": 0.4020000000000001
+        }
+      },
+      {
+        "step": 5,
+        "agent": "B",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.09000000357627869,
+          "trust": 0.925000011920929,
+          "conflict": 0.03750000149011612,
+          "calmness": 0.4020000100135803
+        },
+        "state_after": {
+          "emotion": 0.3950000000000001,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.9886000000000001,
+          "calmness_b": 0.5970000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1099,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1199,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7202000000000001,
+      "calmness_b": 0.7022,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7202000000000001,
+          "calmness_b": 0.7022
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1299,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7202000000000001,
+      "calmness_b": 0.7022,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7202000000000001,
+          "calmness_b": 0.7022
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1399,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.56,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.9160000000000001,
+      "calmness_b": 0.756,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 28.0775,
+    "total_team_reward_b": 0.16250000000000003,
+    "episode_length": 3,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 6,
+        "action_name": "CHANGE_TOPIC",
+        "reward": 0.16250000000000003,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.11500000000000002,
+          "trust": 0.91,
+          "conflict": 0.044999999999999984,
+          "calmness_a": 0.6530000000000001,
+          "calmness_b": 0.5902000000000001
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.11500000208616257,
+          "trust": 0.9100000262260437,
+          "conflict": 0.04500000178813934,
+          "calmness": 0.652999997138977
+        },
+        "state_after": {
+          "emotion": 0.56,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.9160000000000001,
+          "calmness_b": 0.756
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1499,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1599,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1699,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1799,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.56,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.9160000000000001,
+      "calmness_b": 0.756,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 28.0775,
+    "total_team_reward_b": 0.16250000000000003,
+    "episode_length": 3,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 6,
+        "action_name": "CHANGE_TOPIC",
+        "reward": 0.16250000000000003,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.11500000000000002,
+          "trust": 0.91,
+          "conflict": 0.044999999999999984,
+          "calmness_a": 0.6530000000000001,
+          "calmness_b": 0.5902000000000001
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.11500000208616257,
+          "trust": 0.9100000262260437,
+          "conflict": 0.04500000178813934,
+          "calmness": 0.652999997138977
+        },
+        "state_after": {
+          "emotion": 0.56,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.9160000000000001,
+          "calmness_b": 0.756
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1899,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.8094000000000001,
+      "calmness_b": 0.6194,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 5.946250000000001,
+    "total_team_reward_b": 22.208750000000002,
+    "episode_length": 4,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 8,
+        "action_name": "BLAME",
+        "reward": -2.79125,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": -0.33999999999999997,
+          "trust": 0.525,
+          "conflict": 0.4075,
+          "calmness_a": 0.4682000000000001,
+          "calmness_b": 0.2822
+        }
+      },
+      {
+        "step": 2,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 2.8687500000000004,
+        "state_before": {
+          "emotion": -0.3400000035762787,
+          "trust": 0.5249999761581421,
+          "conflict": 0.4074999988079071,
+          "calmness": 0.4681999981403351
+        },
+        "state_after": {
+          "emotion": 0.040000000000000036,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.6802000000000001,
+          "calmness_b": 0.4174
+        }
+      },
+      {
+        "step": 3,
+        "agent": "B",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.03999999910593033,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness": 0.4174000024795532
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.8094000000000001,
+          "calmness_b": 0.6194
+        }
+      }
+    ]
+  },
+  {
+    "episode": 1999,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7202000000000001,
+      "calmness_b": 0.7022,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7202000000000001,
+          "calmness_b": 0.7022
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2099,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2199,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7496000000000002,
+      "calmness_b": 0.7512000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7496000000000002,
+          "calmness_b": 0.7512000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2299,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2399,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2499,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.35500000000000004,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7412000000000001,
+      "calmness_b": 0.7372000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.35500000000000004,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7412000000000001,
+          "calmness_b": 0.7372000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2599,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2699,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2799,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2899,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 2999,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7496000000000002,
+      "calmness_b": 0.7512000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7496000000000002,
+          "calmness_b": 0.7512000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3099,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7202000000000001,
+      "calmness_b": 0.7022,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7202000000000001,
+          "calmness_b": 0.7022
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3199,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7496000000000002,
+      "calmness_b": 0.7512000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 2,
+        "action_name": "EXPLAIN",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7496000000000002,
+          "calmness_b": 0.7512000000000001
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3299,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3399,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3499,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3599,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.37000000000000005,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7517000000000001,
+      "calmness_b": 0.7547,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 4,
+        "action_name": "SUGGEST_SOLUTION",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.37000000000000005,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7517000000000001,
+          "calmness_b": 0.7547
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3699,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7202000000000001,
+      "calmness_b": 0.7022,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7202000000000001,
+          "calmness_b": 0.7022
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3799,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.31500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7202000000000001,
+      "calmness_b": 0.7022,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 5,
+        "action_name": "ASK_FOR_NEEDS",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.31500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7202000000000001,
+          "calmness_b": 0.7022
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3899,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.38500000000000006,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7370000000000001,
+      "calmness_b": 0.7302,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.38500000000000006,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7370000000000001,
+          "calmness_b": 0.7302
+        }
+      }
+    ]
+  },
+  {
+    "episode": 3999,
+    "initial_state": {
+      "emotion": -0.3,
+      "trust": 0.4,
+      "conflict": 0.44999999999999996,
+      "calmness_a": 0.4,
+      "calmness_b": 0.4
+    },
+    "final_state": {
+      "emotion": 0.35500000000000004,
+      "trust": 1.0,
+      "conflict": 0.0,
+      "calmness_a": 0.7412000000000001,
+      "calmness_b": 0.7372000000000001,
+      "termination_reason": "SUCCESS"
+    },
+    "total_team_reward_a": 3.0775,
+    "total_team_reward_b": 25.0,
+    "episode_length": 2,
+    "steps": [
+      {
+        "step": 0,
+        "agent": "A",
+        "action": 0,
+        "action_name": "APOLOGIZE",
+        "reward": 3.0775,
+        "state_before": {
+          "emotion": -0.30000001192092896,
+          "trust": 0.4000000059604645,
+          "conflict": 0.44999998807907104,
+          "calmness": 0.4000000059604645
+        },
+        "state_after": {
+          "emotion": 0.08000000000000002,
+          "trust": 0.89,
+          "conflict": 0.05499999999999999,
+          "calmness_a": 0.6120000000000001,
+          "calmness_b": 0.5352
+        }
+      },
+      {
+        "step": 1,
+        "agent": "B",
+        "action": 1,
+        "action_name": "EMPATHIZE",
+        "reward": 25.0,
+        "state_before": {
+          "emotion": 0.07999999821186066,
+          "trust": 0.8899999856948853,
+          "conflict": 0.054999999701976776,
+          "calmness": 0.5351999998092651
+        },
+        "state_after": {
+          "emotion": 0.35500000000000004,
+          "trust": 1.0,
+          "conflict": 0.0,
+          "calmness_a": 0.7412000000000001,
+          "calmness_b": 0.7372000000000001
+        }
+      }
+    ]
+  }
+]

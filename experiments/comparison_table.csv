@@ -1,0 +1,12 @@
+Experiment,Description,Final_Reward_A,Final_Reward_B,Avg_Episode_Length,Final_Emotion,Final_Trust,Final_Conflict
+S1,"Q-learning, neutral vs neutral (Baseline)",-1.462,-0.768,2.9760000000000004,-0.962,0.01,0.976
+S2,"Q-learning, impulsive vs sensitive",-1.432,-0.764,2.898,-0.962,0.014,0.974
+S3,"Q-learning, impulsive vs impulsive",-1.458,-0.749,2.878,-0.965,0.014,0.975
+S4,"Q-learning, neutral vs avoidant",-1.497,-0.743,2.972,-0.972,0.01,0.981
+S5,"Q-learning, sensitive vs sensitive",-1.49,-0.75,3.04,-0.951,0.015,0.968
+S6,"Q-learning, fixed_opponent, impulsive vs sensitive",-2.396,,4.7860000000000005,-0.878,0.119,0.879
+S2_SARSA,"SARSA, impulsive vs sensitive",-0.939,-0.888,2.122,-0.867,0.059,0.904
+D1,"DQN, neutral vs neutral (Deep baseline)",-2.48,0.024,15.495999999999999,-0.553,0.582,0.486
+D2,"DQN, impulsive vs sensitive",-1.317,-1.149,14.16,-0.616,0.598,0.509
+D3,"PPO, impulsive vs sensitive",,,,-0.2,0.6,0.3
+D4,"PPO, sensitive vs sensitive",,,,-0.2,0.6,0.3

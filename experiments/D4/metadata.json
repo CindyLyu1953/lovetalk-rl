@@ -1,0 +1,17 @@
+{
+  "exp_id": "D4",
+  "config": {
+    "algorithm": "ppo",
+    "mode": "self_play",
+    "personality_a": "sensitive",
+    "personality_b": "sensitive",
+    "description": "\u6d4b\u8bd5'\u60c5\u7eea\u7ec6\u817b\u7684\u4eba'\u4e92\u52a8\u6a21\u5f0f (Testing emotionally delicate interaction)",
+    "category": "deep"
+  },
+  "num_episodes": 5000,
+  "start_time": "2025-11-15T18:02:40.319860",
+  "command": "python scripts/train_deep.py --algorithm ppo --episodes 5000 --personality_a sensitive --personality_b sensitive --train_mode self_play --save_dir experiments/D4/checkpoints --log_interval 100 --save_interval 1000 --history_length 10",
+  "end_time": "2025-11-15T18:02:41.655192",
+  "status": "failed",
+  "error": "Command '['python', 'scripts/train_deep.py', '--algorithm', 'ppo', '--episodes', '5000', '--personality_a', 'sensitive', '--personality_b', 'sensitive', '--train_mode', 'self_play', '--save_dir', 'experiments/D4/checkpoints', '--log_interval', '100', '--save_interval', '1000', '--history_length', '10']' returned non-zero exit status 1."
+}

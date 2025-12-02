@@ -1,0 +1,95 @@
+{
+  "total_experiments": 11,
+  "episodes_per_experiment": 5000,
+  "experiments": {
+    "S1": {
+      "algorithm": "q_learning",
+      "mode": "self_play",
+      "personality_a": "neutral",
+      "personality_b": "neutral",
+      "description": "Baseline \u57fa\u51c6\u7ebf",
+      "category": "shallow"
+    },
+    "S2": {
+      "algorithm": "q_learning",
+      "mode": "self_play",
+      "personality_a": "impulsive",
+      "personality_b": "sensitive",
+      "description": "\u51b2\u7a81\u6700\u6fc0\u70c8\u7ec4\u5408 (Most intense conflict combination)",
+      "category": "shallow"
+    },
+    "S3": {
+      "algorithm": "q_learning",
+      "mode": "self_play",
+      "personality_a": "impulsive",
+      "personality_b": "impulsive",
+      "description": "\u6781\u7aef\u51b2\u7a81 (Extreme conflict)",
+      "category": "shallow"
+    },
+    "S4": {
+      "algorithm": "q_learning",
+      "mode": "self_play",
+      "personality_a": "neutral",
+      "personality_b": "avoidant",
+      "description": "\u51b7\u6218\u6a21\u5f0f (Cold war mode)",
+      "category": "shallow"
+    },
+    "S5": {
+      "algorithm": "q_learning",
+      "mode": "self_play",
+      "personality_a": "sensitive",
+      "personality_b": "sensitive",
+      "description": "\u90fd\u654f\u611f,\u5bb9\u6613\u8bef\u89e3\u5347\u7ea7 (Both sensitive, easily misunderstood)",
+      "category": "shallow"
+    },
+    "S6": {
+      "algorithm": "q_learning",
+      "mode": "fixed_opponent",
+      "personality_a": "impulsive",
+      "personality_b": "sensitive",
+      "description": "A\u5b66\u4e60\u7406\u89e3\u654f\u611f\u578b\u4f34\u4fa3 (A learns to understand sensitive partner)",
+      "category": "shallow"
+    },
+    "D1": {
+      "algorithm": "dqn",
+      "mode": "self_play",
+      "personality_a": "neutral",
+      "personality_b": "neutral",
+      "description": "\u6df1\u5ea6 baseline (Deep baseline)",
+      "category": "deep"
+    },
+    "D2": {
+      "algorithm": "dqn",
+      "mode": "self_play",
+      "personality_a": "impulsive",
+      "personality_b": "sensitive",
+      "description": "\u5bf9\u6bd4 shallow \u2192 deep \u4f18\u52bf (Comparison: shallow \u2192 deep advantage)",
+      "category": "deep"
+    },
+    "D3": {
+      "algorithm": "ppo",
+      "mode": "self_play",
+      "personality_a": "impulsive",
+      "personality_b": "sensitive",
+      "description": "PPO \u7a33\u5b9a\u7b56\u7565 (PPO stable strategy)",
+      "category": "deep"
+    },
+    "D4": {
+      "algorithm": "ppo",
+      "mode": "self_play",
+      "personality_a": "sensitive",
+      "personality_b": "sensitive",
+      "description": "\u6d4b\u8bd5'\u60c5\u7eea\u7ec6\u817b\u7684\u4eba'\u4e92\u52a8\u6a21\u5f0f (Testing emotionally delicate interaction)",
+      "category": "deep"
+    },
+    "S2_SARSA": {
+      "algorithm": "sarsa",
+      "mode": "self_play",
+      "personality_a": "impulsive",
+      "personality_b": "sensitive",
+      "description": "SARSA for comparison with S2 (Q-learning vs SARSA)",
+      "category": "shallow"
+    }
+  },
+  "start_time": "2025-11-15T18:00:49.986535"
+}

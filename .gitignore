@@ -39,22 +39,22 @@ venv.bak/
 .ipynb_checkpoints
 
 # PyTorch
-*.pth
+# *.pth
 *.pt
 *.pkl
 *.ckpt
 
 # Checkpoints and logs
-checkpoints/
+# checkpoints/
 logs/
 runs/
 wandb/
 tensorboard/
 
 # Data
-data/
-*.csv
-*.json
+# data/
+# *.csv
+# *.json
 *.h5
 *.hdf5
 
@@ -73,5 +73,3 @@ htmlcov/
 
 # Documentation
 docs/_build/
-
-HOW_TO_RUN_PAIRS.md
