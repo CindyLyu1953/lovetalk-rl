@@ -182,42 +182,111 @@ pip install -r requirements.txt
 
 ## Quick Start
 
-### Training
+### Training Commands
 
-**Train all 5 experiments (D1-D5):**
+**Set environment variable (avoid OMP error):**
 ```bash
-OMP_NUM_THREADS=1 python scripts/train_deep.py --all --save_dir ./experiments
+export OMP_NUM_THREADS=1
 ```
 
-**Train single experiment:**
+**Train a single experiment (D1-D5):**
 ```bash
-OMP_NUM_THREADS=1 python scripts/train_deep.py \
-  --experiment D1 \
-  --save_dir ./experiments \
-  --episodes 8000
+python scripts/train_deep.py --experiment D1 --save_dir ./experiments
+```
+
+**Train all experiments (D1-D5):**
+```bash
+python scripts/train_deep.py --all --save_dir ./experiments
 ```
 
 **Experiments:**
-- **D1:** neutral × neutral (baseline)
-- **D2:** neurotic × agreeable (conflict)
-- **D3:** neurotic × neurotic (extreme conflict)
-- **D4:** neutral × avoidant (cold war)
-- **D5:** agreeable × conscientious (cooperative)
+- **D1:** Neutral × Neutral (baseline)
+- **D2:** Neurotic × Agreeable (conflict scenario)
+- **D3:** Neurotic × Neurotic (extreme conflict)
+- **D4:** Neutral × Avoidant (cold war scenario)
+- **D5:** Agreeable × Conscientious (cooperative scenario)
 
-### Evaluation
+---
 
-**Evaluate single experiment:**
+### Evaluation Commands
+
+**Evaluate a single run:**
 ```bash
-OMP_NUM_THREADS=1 python scripts/evaluate_single_run.py \
-  --checkpoint_dir ./experiments/D1/checkpoints/run_15 \
+python scripts/evaluate_single_run.py \
   --experiment D1 \
+  --run_id 1 \
   --num_episodes 100
 ```
 
-**Evaluate all experiments:**
+**Evaluate all runs (D1-D5, run_1 to run_15):**
 ```bash
-bash scripts/evaluate_all_experiments.sh
+python scripts/evaluate_all_runs.py
 ```
+
+---
+
+### Generate Natural Language Dialogue
+
+**Set Gemini API Key:**
+```bash
+export GEMINI_API_KEY="your-api-key-here"
+```
+
+**Render dialogue for a specific episode:**
+```bash
+python llm_extension/render_episode.py \
+  --episode_file ./experiments/D1/checkpoints/run_1/detailed_episodes.json \
+  --episode_idx 0
+```
+
+**Render and save to file:**
+```bash
+python llm_extension/render_episode.py \
+  --episode_file ./experiments/D1/checkpoints/run_1/detailed_episodes.json \
+  --episode_idx 0 \
+  --output dialogue_output.json
+```
+
+**Specify scenario:**
+```bash
+python llm_extension/render_episode.py \
+  --episode_file ./experiments/D1/checkpoints/run_1/detailed_episodes.json \
+  --episode_idx 0 \
+  --scenario forgot_event
+```
+
+**View LLM module demo:**
+```bash
+python llm_extension/dialogue_renderer.py
+```
+
+---
+
+### Example Long Episodes
+
+Based on trained models, here are some interesting long episodes you can render:
+
+```bash
+# D1 - Longest episode (16 steps, SUCCESS)
+python llm_extension/render_episode.py \
+  --episode_file ./experiments/D1/checkpoints/run_9/detailed_episodes.json \
+  --episode_idx 41 \
+  --scenario forgot_event
+
+# D4 - Longest in project (25 steps, SUCCESS)
+python llm_extension/render_episode.py \
+  --episode_file ./experiments/D4/checkpoints/run_9/detailed_episodes.json \
+  --episode_idx 35 \
+  --scenario time_distribution
+
+# D4 - Long failure case (22 steps, FAILURE)
+python llm_extension/render_episode.py \
+  --episode_file ./experiments/D4/checkpoints/run_9/detailed_episodes.json \
+  --episode_idx 42 \
+  --scenario time_distribution
+```
+
+---
 
 ### Results
 
@@ -226,12 +295,17 @@ Results are saved in:
 experiments/
 ├── D1/
 │   ├── checkpoints/
-│   │   └── run_15/
-│   │       ├── agent_a_ep8000.pth
-│   │       ├── agent_b_ep8000.pth
-│   │       ├── train_stats.json
-│   │       ├── detailed_episodes.json
-│   │       └── evaluation_results.json
+│   │   ├── run_1/
+│   │   │   ├── agent_a_ep2000.pth
+│   │   │   ├── agent_a_ep4000.pth
+│   │   │   ├── agent_b_ep2000.pth
+│   │   │   ├── agent_b_ep4000.pth
+│   │   │   ├── train_stats.json
+│   │   │   ├── detailed_episodes.json
+│   │   │   └── evaluation_results.json
+│   │   ├── run_2/...
+│   │   └── run_15/...
+│   ├── aggregated_evaluation_D1.json
 │   └── evaluation_deep_D1.json
 ├── D2/...
 ├── D3/...
@@ -243,25 +317,27 @@ experiments/
 
 ## LLM Dialogue Renderer (Optional Extension)
 
-A standalone module for converting RL semantic actions into natural language utterances using Gemini API.
+A standalone module for converting RL semantic actions into natural language dialogue using Gemini API.
 
-**⚠️ Important:** This module is **completely isolated** from RL training. It does NOT affect state transitions, rewards, or policy learning. It is purely for generating natural language output.
+**Important:** This module is **completely isolated** from RL training. It does NOT affect state transitions, rewards, or policy learning. It is purely for post-training visualization.
 
 **Key Features:**
 - **Completely Isolated:** Does NOT affect RL training, rewards, or state
-- **LLM-Powered:** Uses Gemini Flash for fast, natural text generation
-- **Scenario-Aware:** 10 built-in conflict scenarios (e.g., forgot anniversary, work neglect, trust issues)
-- **Simple API:** One function to generate dialogue from action labels
+- **LLM-Powered:** Uses Gemini 2.0 Flash for fast, natural text generation
+- **Scenario-Aware:** 10 built-in fictional scenarios (e.g., forgot_event, busy_schedule, time_distribution)
+- **Episode Rendering:** Converts full episode trajectories into natural dialogue
+- **Conversation Context:** Maintains dialogue history for coherent multi-turn conversations
+- **English Output:** Generates natural English conversational utterances
 
 ### What are "Scenarios"?
 
-**Scenarios = Conflict backgrounds/premises**, not dialogue states.
+**Scenarios = Fixed background context for the entire episode**, not individual dialogue states.
 
 Example:
-- ✅ Scenario: "A forgot the anniversary, B feels disappointed" (why conflict started)
-- ❌ Not a scenario: "Currently arguing" (dialogue state)
+- Scenario: "Character A forgot an important shared event. Character B notices this oversight." (Fixed premise)
+- Not a scenario: "Currently arguing" (This is a dynamic state within the episode)
 
-The entire conversation happens under the same scenario.
+All dialogue turns in a single episode occur within the same fixed scenario context.
 
 ### Quick Example
 
@@ -271,12 +347,12 @@ from llm_extension import DialogueRenderer
 renderer = DialogueRenderer()  # Requires GEMINI_API_KEY env var
 
 utterance = renderer.generate_reply(
-    scenario_id="forgot_event",        # Conflict background
-    agent_role="A",                    # You are A
-    action_label="apologize",          # RL chose this action
-    prev_message="How could you forget something this important?"  # What B just said
+    scenario_id="forgot_event",        # Fictional scenario background
+    agent_role="A",                    # Character A
+    action_label="apologize",          # RL action chosen by agent
+    prev_message="How could you forget something this important?"  # Previous utterance
 )
-# Output: "I'm so sorry, I really forgot, I know this hurt you."
+# Output: "I'm so sorry, I really shouldn't have forgotten this, I know it was important to you."
 ```
 
 ### Setup
@@ -288,11 +364,11 @@ pip install google-generativeai
 # Set API key (in your shell or .bashrc/.zshrc)
 export GEMINI_API_KEY="your-api-key-here"
 
-# Run example
+# Run demo
 python llm_extension/dialogue_renderer.py
 ```
 
-**📖 Full Documentation:** See [`llm_extension/README.md`](llm_extension/README.md)
+**Full Documentation:** See [`llm_extension/README.md`](llm_extension/README.md) and [`llm_extension/USAGE.md`](llm_extension/USAGE.md)
 
 ---
 
@@ -302,11 +378,7 @@ python llm_extension/dialogue_renderer.py
 lovetalk-rl/
 ├── README.md                      # This file
 ├── requirements.txt               # Python dependencies
-│
-├── llm_extension/                 # LLM Extension (optional, completely isolated)
-│   ├── __init__.py
-│   ├── dialogue_renderer.py       # Natural language generator
-│   └── README.md                  # Extension documentation
+├── .gitignore                     # Git ignore rules
 │
 ├── agents/                        # RL Agents
 │   └── deep_rl/
@@ -330,20 +402,28 @@ lovetalk-rl/
 │   ├── train_deep.py              # Train Double DQN agents
 │   ├── evaluate_deep.py           # Evaluate trained agents
 │   ├── evaluate_single_run.py     # Evaluate single run
-│   └── evaluate_all_experiments.sh # Batch evaluation
+│   └── evaluate_all_runs.py       # Aggregate evaluation across all runs
 │
-├── config/                        # Configuration
-│   └── config.yaml                # Environment configuration
+├── llm_extension/                 # LLM Extension (optional, completely isolated)
+│   ├── __init__.py
+│   ├── dialogue_renderer.py       # Natural language generator (Gemini API)
+│   ├── render_episode.py          # Render episode trajectories as dialogue
+│   ├── README.md                  # Extension documentation
+│   └── USAGE.md                   # Detailed usage guide
 │
-├── experiments/                   # Training results
-│   ├── D1/...                     # Experiment results
-│   ├── D2/...
-│   ├── D3/...
-│   ├── D4/...
-│   └── D5/...
-│
-└── utils/                         # Utilities
-    └── visualizer.py              # Visualization tools
+└── experiments/                   # Training results
+    ├── D1/                        # Experiment 1 (Neutral × Neutral)
+    │   ├── checkpoints/
+    │   │   ├── run_1/...          # 15 independent runs
+    │   │   └── run_15/...
+    │   ├── aggregated_evaluation_D1.json
+    │   └── evaluation_deep_D1.json
+    ├── D2/...                     # Experiment 2 (Neurotic × Agreeable)
+    ├── D3/...                     # Experiment 3 (Neurotic × Neurotic)
+    ├── D4/...                     # Experiment 4 (Neutral × Avoidant)
+    ├── D5/...                     # Experiment 5 (Agreeable × Conscientious)
+    ├── all_results.json           # Combined results
+    └── comparison_table.csv       # Comparison table
 ```
 
 ---
@@ -399,29 +479,29 @@ Each personality affects:
 ### Training Configuration
 
 ```yaml
-num_episodes: 8000
-train_mode: self_play
-log_interval: 200
-save_interval: 2000
-repeats: 15  # 15 independent training runs per experiment
+num_episodes: 4000       # Training episodes per run
+train_mode: self_play    # Both agents learn simultaneously
+log_interval: 200        # Log every 200 episodes
+save_interval: 2000      # Save checkpoints every 2000 episodes
+repeats: 15              # 15 independent training runs per experiment
 ```
 
 ### Initial Conditions
 
 ```yaml
-initial_emotion: -0.3  # Slight negative emotion (conflict)
-initial_trust: 0.4     # Lower trust (challenging scenario)
-initial_calmness: 0.4  # Moderate calmness
-max_episode_steps: 50  # Maximum steps per episode
+initial_emotion: -0.3    # Slight negative emotion (conflict situation)
+initial_trust: 0.4       # Lower trust (challenging scenario)
+initial_calmness: 0.4    # Moderate calmness
+max_episode_steps: 50    # Maximum steps per episode
 ```
 
 ### Expected Performance
 
-After training (8000 episodes):
-- **Success Rate:** 20-40%
-- **Average Episode Length:** 25-35 steps
-- **Epsilon (final):** ~0.16
-- **Training Time:** ~2-4 hours for all 5 experiments
+After training (4000 episodes):
+- **Success Rate:** Varies by experiment (10-40%)
+- **Average Episode Length:** 15-30 steps
+- **Epsilon (final):** ~0.26 (with decay 0.998)
+- **Training Time:** ~1-2 hours for all 5 experiments (15 runs each)
 
 ---
 
@@ -512,5 +592,5 @@ For questions or issues, please open an issue on GitHub or contact the authors.
 
 ---
 
-**Last Updated:** November 29, 2025  
-**Version:** 2.0 (Double DQN + Soft Target Updates)
+**Last Updated:** December 3, 2024  
+**Version:** 2.0 (Double DQN + Soft Target Updates + Stage-Based Reward Shaping)
